@@ -1,7 +1,8 @@
 "use client";
 
+import { consultationHref } from "@/lib/contact";
 import { cn } from "@/lib/utils";
-import { GraduationCap, Menu, X } from "lucide-react";
+import { Calendar01Icon, GraduationScrollIcon, Menu01Icon, ArrowLeft01Icon } from "hugeicons-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -21,7 +22,7 @@ export function Navbar() {
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-2.5">
                     <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary">
-                        <GraduationCap size={20} className="text-white" />
+                        <GraduationScrollIcon size={20} className="text-white" />
                     </div>
                     <div className="leading-tight">
                         <span className="text-base font-bold text-text-primary tracking-tight">
@@ -49,13 +50,20 @@ export function Navbar() {
                 {/* Desktop CTA */}
                 <div className="hidden items-center gap-3 md:flex">
                     <Link
+                        href={consultationHref}
+                        className="inline-flex items-center gap-2 rounded-lg border border-primary/15 bg-primary/5 px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/10"
+                    >
+                        <Calendar01Icon size={16} />
+                        Book Consultation
+                    </Link>
+                    <Link
                         href="/login"
                         className="rounded-lg px-4 py-2 text-sm font-medium text-text-secondary transition-colors hover:text-text-primary"
                     >
                         Log in
                     </Link>
                     <Link
-                        href="/register"
+                        href="/dashboard"
                         className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-dark"
                     >
                         Get Started
@@ -68,7 +76,7 @@ export function Navbar() {
                     className="flex h-10 w-10 items-center justify-center rounded-lg text-text-secondary hover:bg-surface md:hidden"
                     aria-label={mobileOpen ? "Close menu" : "Open menu"}
                 >
-                    {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+                    {mobileOpen ? <ArrowLeft01Icon size={22} /> : <Menu01Icon size={22} />}
                 </button>
             </div>
 
@@ -99,7 +107,15 @@ export function Navbar() {
                         Log in
                     </Link>
                     <Link
-                        href="/register"
+                        href={consultationHref}
+                        onClick={() => setMobileOpen(false)}
+                        className="inline-flex items-center justify-center gap-2 rounded-lg border border-primary/15 bg-primary/5 px-3 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-primary/10"
+                    >
+                        <Calendar01Icon size={16} />
+                        Book Consultation
+                    </Link>
+                    <Link
+                        href="/dashboard"
                         onClick={() => setMobileOpen(false)}
                         className="rounded-lg bg-primary px-3 py-2.5 text-center text-sm font-medium text-white transition-colors hover:bg-primary-dark"
                     >

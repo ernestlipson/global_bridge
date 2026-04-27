@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight01Icon } from "hugeicons-react";
 import Link from "next/link";
 
 export function CTA() {
@@ -22,11 +22,11 @@ export function CTA() {
                         </p>
                         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
                             <Link
-                                href="/register"
+                                href="/dashboard"
                                 className="inline-flex h-12 items-center gap-2 rounded-xl bg-gradient-to-r from-accent to-emerald-500 px-8 text-base font-semibold text-white shadow-lg shadow-accent/30 transition-all hover:from-accent-dark hover:to-emerald-600 hover:shadow-xl"
                             >
                                 Get Started Free
-                                <ArrowRight size={18} />
+                                <ArrowRight01Icon size={18} />
                             </Link>
                             <Link
                                 href="/login"

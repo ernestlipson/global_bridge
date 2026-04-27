@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { InputHTMLAttributes, forwardRef, useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { EyeIcon, ViewOffSlashIcon } from "hugeicons-react";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
     label?: string;
@@ -47,7 +47,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                             className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-secondary transition-colors"
                             aria-label={showPassword ? "Hide password" : "Show password"}
                         >
-                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                            {showPassword ? <ViewOffSlashIcon size={18} /> : <EyeIcon size={18} />}
                         </button>
                     )}
                 </div>

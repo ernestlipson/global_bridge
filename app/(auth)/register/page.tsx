@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { GraduationCap } from "lucide-react";
+import { GraduationScrollIcon } from "hugeicons-react";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 
@@ -33,7 +33,7 @@ export default function RegisterPage() {
             {/* Mobile logo */}
             <Link href="/" className="mb-8 flex items-center gap-2.5 lg:hidden">
                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary">
-                    <GraduationCap size={20} className="text-white" />
+                    <GraduationScrollIcon size={20} className="text-white" />
                 </div>
                 <span className="text-lg font-bold text-text-primary tracking-tight">
                     GlobalBridge

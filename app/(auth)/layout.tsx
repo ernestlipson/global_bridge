@@ -1,4 +1,4 @@
-import { GraduationCap } from "lucide-react";
+import { GraduationScrollIcon } from "hugeicons-react";
 import Link from "next/link";
 
 export default function AuthLayout({
@@ -21,7 +21,7 @@ export default function AuthLayout({
                     {/* Logo */}
                     <Link href="/" className="flex items-center gap-3">
                         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 backdrop-blur-sm">
-                            <GraduationCap size={22} className="text-white" />
+                            <GraduationScrollIcon size={22} className="text-white" />
                         </div>
                         <div>
                             <span className="text-lg font-bold tracking-tight">

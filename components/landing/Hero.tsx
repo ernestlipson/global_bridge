@@ -1,15 +1,46 @@
 import {
-    GraduationCap,
-    Globe,
-    Shield,
-    ArrowRight,
-    Sparkles,
-    CheckCircle,
-} from "lucide-react";
+    GraduationScrollIcon,
+    GlobeIcon,
+    Shield01Icon,
+    ArrowRight01Icon,
+    SparklesIcon,
+    CheckmarkCircle01Icon,
+} from "hugeicons-react";
 import Image from "next/image";
 import Link from "next/link";
 
-const badges = ["UK", "USA", "Canada", "Europe", "Australia", "Dubai"];
+const destinationFlags = [
+    {
+        country: "United Kingdom",
+        code: "UK",
+        src: "https://cdn.countryflags.com/thumbs/united-kingdom/flag-square-500.png",
+    },
+    {
+        country: "United States",
+        code: "USA",
+        src: "https://cdn.countryflags.com/thumbs/united-states-of-america/flag-square-500.png",
+    },
+    {
+        country: "Canada",
+        code: "CAN",
+        src: "https://cdn.countryflags.com/thumbs/canada/flag-square-500.png",
+    },
+    {
+        country: "Australia",
+        code: "AUS",
+        src: "https://cdn.countryflags.com/thumbs/australia/flag-square-500.png",
+    },
+    {
+        country: "Germany",
+        code: "DEU",
+        src: "https://cdn.countryflags.com/thumbs/germany/flag-square-500.png",
+    },
+    {
+        country: "United Arab Emirates",
+        code: "UAE",
+        src: "https://cdn.countryflags.com/thumbs/united-arab-emirates/flag-square-500.png",
+    },
+];
 
 export function Hero() {
     return (
@@ -26,7 +57,7 @@ export function Hero() {
                     <div className="max-w-xl">
                         {/* Trust badge */}
                         <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent-light/50 px-4 py-1.5 text-sm font-medium text-accent-dark">
-                            <Sparkles size={15} />
+                            <SparklesIcon size={15} />
                             AI-Powered Study Abroad Platform
                         </div>
 
@@ -69,7 +100,7 @@ export function Hero() {
                                     key={item}
                                     className="flex items-center gap-2.5 text-sm text-text-secondary"
                                 >
-                                    <CheckCircle
+                                    <CheckmarkCircle01Icon
                                         size={17}
                                         className="shrink-0 text-accent"
                                     />
@@ -81,11 +112,11 @@ export function Hero() {
                         {/* CTAs */}
                         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                             <Link
-                                href="/register"
+                                href="/dashboard"
                                 className="inline-flex h-12 items-center gap-2 rounded-xl bg-gradient-to-r from-accent to-emerald-500 px-7 text-base font-semibold text-white shadow-lg shadow-accent/25 transition-all hover:from-accent-dark hover:to-emerald-600 hover:shadow-xl hover:shadow-accent/30"
                             >
                                 Get Started Free
-                                <ArrowRight size={18} />
+                                <ArrowRight01Icon size={18} />
                             </Link>
                             <a
                                 href="#how-it-works"
@@ -95,24 +126,37 @@ export function Hero() {
                             </a>
                         </div>
 
-                        {/* Destination badges */}
-                        <div className="mt-8 flex flex-wrap items-center gap-2">
+                        {/* Destination flags */}
+                        <div className="mt-8">
                             <span className="text-sm text-text-muted">Destinations:</span>
-                            {badges.map((badge) => (
-                                <span
-                                    key={badge}
-                                    className="rounded-full border border-border bg-white px-3 py-0.5 text-xs font-medium text-text-secondary shadow-sm"
-                                >
-                                    {badge}
-                                </span>
-                            ))}
+                            <div className="mt-3 flex flex-wrap items-start gap-x-4 gap-y-3">
+                                {destinationFlags.map((item) => (
+                                    <div
+                                        key={item.code}
+                                        className="flex min-w-[56px] flex-col items-center"
+                                        aria-label={`${item.country} (${item.code})`}
+                                        title={item.country}
+                                    >
+                                        <Image
+                                            src={item.src}
+                                            alt={`${item.country} flag`}
+                                            width={28}
+                                            height={28}
+                                            className="h-7 w-7 rounded-full object-cover"
+                                        />
+                                        <span className="mt-1 text-[11px] font-semibold tracking-wide text-text-secondary">
+                                            {item.code}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
 
                     {/* Right — Image panel */}
                     <div className="relative hidden lg:block">
                         {/* Main image */}
-                        <div className="relative aspect-[4/5] overflow-hidden rounded-3xl shadow-2xl shadow-primary/10">
+                        <div className="relative aspect-[4/3] overflow-hidden rounded-3xl shadow-2xl shadow-primary/10">
                             <Image
                                 src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&h=1000&fit=crop&crop=faces"
                                 alt="Happy students studying abroad together"
@@ -123,38 +167,34 @@ export function Hero() {
                             />
                             {/* Gradient overlay */}
                             <div className="absolute inset-0 bg-gradient-to-t from-primary-dark/40 via-transparent to-transparent" />
+                        </div>
 
-                            {/* Floating stat card */}
-                            <div className="absolute bottom-6 left-6 right-6 rounded-2xl bg-white/95 backdrop-blur-sm p-4 shadow-lg">
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <p className="text-xs font-medium text-text-muted">
-                                            Visa Success Rate
-                                        </p>
-                                        <p className="text-2xl font-bold text-primary">95%</p>
-                                    </div>
-                                    <div className="h-10 w-px bg-border" />
-                                    <div>
-                                        <p className="text-xs font-medium text-text-muted">
-                                            Universities
-                                        </p>
-                                        <p className="text-2xl font-bold text-primary">500+</p>
-                                    </div>
-                                    <div className="h-10 w-px bg-border" />
-                                    <div>
-                                        <p className="text-xs font-medium text-text-muted">
-                                            Countries
-                                        </p>
-                                        <p className="text-2xl font-bold text-primary">50+</p>
-                                    </div>
-                                </div>
+                        {/* Muted stats strip below image */}
+                        <div className="mt-4 grid grid-cols-3 gap-4 rounded-2xl border border-border/70 bg-surface/90 px-5 py-4">
+                            <div>
+                                <p className="text-xs font-medium uppercase tracking-wide text-text-muted/90">
+                                    Visa Success Rate
+                                </p>
+                                <p className="mt-1 text-2xl font-semibold text-text-secondary">95%</p>
+                            </div>
+                            <div className="border-x border-border/80 px-4">
+                                <p className="text-xs font-medium uppercase tracking-wide text-text-muted/90">
+                                    Universities
+                                </p>
+                                <p className="mt-1 text-2xl font-semibold text-text-secondary">500+</p>
+                            </div>
+                            <div>
+                                <p className="text-xs font-medium uppercase tracking-wide text-text-muted/90">
+                                    Countries
+                                </p>
+                                <p className="mt-1 text-2xl font-semibold text-text-secondary">50+</p>
                             </div>
                         </div>
 
                         {/* Small floating card — top right */}
                         <div className="absolute -top-4 -right-4 z-10 flex items-center gap-3 rounded-2xl bg-white p-4 shadow-lg border border-border/40">
                             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10">
-                                <Shield size={20} className="text-accent" />
+                                <Shield01Icon size={20} className="text-accent" />
                             </div>
                             <div>
                                 <p className="text-sm font-semibold text-text-primary">
@@ -167,7 +207,7 @@ export function Hero() {
                         {/* Small floating card — left */}
                         <div className="absolute top-1/3 -left-8 z-10 flex items-center gap-3 rounded-2xl bg-white p-4 shadow-lg border border-border/40">
                             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-                                <GraduationCap size={20} className="text-primary" />
+                                <GraduationScrollIcon size={20} className="text-primary" />
                             </div>
                             <div>
                                 <p className="text-sm font-semibold text-text-primary">
@@ -182,7 +222,7 @@ export function Hero() {
                 {/* Stats row — mobile only (visible below hero on smaller screens) */}
                 <div className="mt-12 grid grid-cols-3 gap-6 border-t border-border/60 pt-8 lg:hidden">
                     <div className="flex flex-col items-center gap-1">
-                        <GraduationCap
+                        <GraduationScrollIcon
                             size={20}
                             className="mb-1 text-primary"
                             aria-hidden="true"
@@ -191,7 +231,7 @@ export function Hero() {
                         <span className="text-xs text-text-muted">Universities</span>
                     </div>
                     <div className="flex flex-col items-center gap-1">
-                        <Globe
+                        <GlobeIcon
                             size={20}
                             className="mb-1 text-primary"
                             aria-hidden="true"
@@ -200,7 +240,7 @@ export function Hero() {
                         <span className="text-xs text-text-muted">Countries</span>
                     </div>
                     <div className="flex flex-col items-center gap-1">
-                        <Shield
+                        <Shield01Icon
                             size={20}
                             className="mb-1 text-primary"
                             aria-hidden="true"

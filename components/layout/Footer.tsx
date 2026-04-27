@@ -1,4 +1,4 @@
-import { GraduationCap, Mail, Phone, MapPin } from "lucide-react";
+import { GraduationScrollIcon, MailboxIcon, AiPhone01Icon, Location01Icon } from "hugeicons-react";
 import Link from "next/link";
 
 const footerLinks = {
@@ -34,7 +34,7 @@ export function Footer() {
                     <div className="lg:col-span-2">
                         <Link href="/" className="flex items-center gap-2.5">
                             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10">
-                                <GraduationCap size={20} className="text-white" />
+                                <GraduationScrollIcon size={20} className="text-white" />
                             </div>
                             <div className="leading-tight">
                                 <span className="text-base font-bold tracking-tight">
@@ -56,18 +56,18 @@ export function Footer() {
                                 href="tel:+233240067412"
                                 className="flex items-center gap-2.5 text-sm text-white/60 transition-colors hover:text-white"
                             >
-                                <Phone size={15} />
+                                <AiPhone01Icon size={15} />
                                 0240067412
                             </a>
                             <a
                                 href="mailto:darkoernest507@gmail.com"
                                 className="flex items-center gap-2.5 text-sm text-white/60 transition-colors hover:text-white"
                             >
-                                <Mail size={15} />
+                                <MailboxIcon size={15} />
                                 darkoernest507@gmail.com
                             </a>
                             <p className="flex items-center gap-2.5 text-sm text-white/60">
-                                <MapPin size={15} />
+                                <Location01Icon size={15} />
                                 Accra, Ghana
                             </p>
                         </div>

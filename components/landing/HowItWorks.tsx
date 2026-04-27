@@ -1,10 +1,9 @@
-import { UserPlus, Brain, Rocket } from "lucide-react";
-import Image from "next/image";
+import { UserStatusIcon, BrainIcon, RocketIcon } from "hugeicons-react";
 
 const steps = [
     {
         step: "01",
-        icon: UserPlus,
+        icon: UserStatusIcon,
         title: "Create Your Profile",
         description:
             "Tell us about your academic background, budget, career goals, and preferred countries. It takes just 5 minutes.",
@@ -12,7 +11,7 @@ const steps = [
     },
     {
         step: "02",
-        icon: Brain,
+        icon: BrainIcon,
         title: "Get AI-Powered Matches",
         description:
             "Our AI analyzes your profile and matches you with the best universities, scholarships, and programs that fit you.",
@@ -20,7 +19,7 @@ const steps = [
     },
     {
         step: "03",
-        icon: Rocket,
+        icon: RocketIcon,
         title: "Apply & Succeed",
         description:
             "Use our tools to ace your visa interview, write your SOP, track applications, and get ready for life abroad.",
@@ -78,19 +77,6 @@ export function HowItWorks() {
                     ))}
                 </div>
 
-                {/* Feature image */}
-                <div className="mt-16 overflow-hidden rounded-2xl shadow-xl shadow-primary/5 border border-border/40">
-                    <div className="relative aspect-[16/7]">
-                        <Image
-                            src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&h=500&fit=crop"
-                            alt="Students collaborating on laptops in a modern university library"
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 768px) 100vw, 1200px"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-accent/10" />
-                    </div>
-                </div>
             </div>
         </section>
     );

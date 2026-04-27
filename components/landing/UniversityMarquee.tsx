@@ -1,36 +1,39 @@
+import Image from "next/image";
+
 const universities = [
-    { name: "Harvard", sub: "Medical School", color: "#A51C30" },
-    { name: "Stanford", sub: "University", color: "#8C1515" },
-    { name: "Berkeley", sub: "University of California", color: "#003262" },
-    { name: "Oxford", sub: "University", color: "#002147" },
-    { name: "Cambridge", sub: "University", color: "#A3C1AD" },
-    { name: "MIT", sub: "Massachusetts", color: "#750014" },
-    { name: "Cornell", sub: "University", color: "#B31B1B" },
-    { name: "Toronto", sub: "University", color: "#002A5C" },
-    { name: "Melbourne", sub: "University", color: "#094183" },
-    { name: "Bond", sub: "University", color: "#00537E" },
-    { name: "Edinburgh", sub: "University", color: "#990033" },
-    { name: "UCL", sub: "London", color: "#500778" },
+    { name: "Harvard", sub: "University", logo: "/universities/harvard.png" },
+    { name: "Stanford", sub: "University", logo: "/universities/stanford.png" },
+    { name: "Berkeley", sub: "UC Berkeley", logo: "/universities/berkeley.png" },
+    { name: "Oxford", sub: "University", logo: "/universities/oxford.png" },
+    { name: "Cambridge", sub: "University", logo: "/universities/cambridge.png" },
+    { name: "MIT", sub: "Massachusetts", logo: "/universities/mit.png" },
+    { name: "Cornell", sub: "University", logo: "/universities/cornell.png" },
+    { name: "Toronto", sub: "University", logo: "/universities/toronto.png" },
+    { name: "Yale", sub: "University", logo: "/universities/yale.png" },
+    { name: "Penn", sub: "University", logo: "/universities/penn.png" },
+    { name: "NYU", sub: "New York", logo: "/universities/nyu.png" },
+    { name: "Georgetown", sub: "University", logo: "/universities/georgetown.png" },
 ];
 
 function LogoCard({
     name,
     sub,
-    color,
+    logo,
 }: {
     name: string;
     sub: string;
-    color: string;
+    logo: string;
 }) {
     return (
-        <div className="flex h-16 min-w-[160px] items-center gap-3 rounded-xl bg-white px-5 shadow-sm border border-border/40">
-            {/* Faux crest/icon */}
-            <div
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-white text-xs font-bold"
-                style={{ backgroundColor: color }}
-                aria-hidden="true"
-            >
-                {name.slice(0, 2).toUpperCase()}
+        <div className="flex h-16 min-w-[170px] items-center gap-3 rounded-xl bg-white px-5 shadow-sm border border-border/40">
+            <div className="relative h-9 w-9 shrink-0">
+                <Image
+                    src={logo}
+                    alt={`${name} logo`}
+                    fill
+                    className="object-contain"
+                    sizes="36px"
+                />
             </div>
             <div className="leading-tight">
                 <span className="text-sm font-semibold text-text-primary">{name}</span>
@@ -60,7 +63,7 @@ export function UniversityMarquee() {
 
                 <div className="flex animate-marquee w-max gap-5">
                     {items.map((uni, i) => (
-                        <LogoCard key={`${uni.name}-${i}`} {...uni} />
+                        <LogoCard key={`${uni.name}-${i}`} name={uni.name} sub={uni.sub} logo={uni.logo} />
                     ))}
                 </div>
             </div>

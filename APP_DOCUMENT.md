@@ -89,6 +89,7 @@ app/
 │   ├── universities/page.tsx     # Smart University Matching
 │   ├── scholarships/page.tsx     # Scholarship & Funding Engine
 │   ├── documents/page.tsx        # AI SOP & Document Builder
+│   ├── transcript/page.tsx       # Transcript Evaluation
 │   ├── applications/page.tsx     # Application Tracker
 │   ├── predeparture/page.tsx     # Pre-departure & Life Abroad Guide
 │   ├── community/page.tsx        # Community & Social Proof
@@ -150,6 +151,11 @@ features/
 │   ├── CVBuilder.tsx             # CV builder UI
 │   └── types.ts                  # Document types
 │
+├── transcript/
+│   ├── TranscriptUpload.tsx      # Transcript file upload UI
+│   ├── EvaluationResult.tsx      # Evaluation results display
+│   └── types.ts                  # Transcript feature types
+│
 ├── applications/
 │   ├── ApplicationTimeline.tsx   # Status timeline component
 │   ├── ApplicationCard.tsx       # Individual application card
@@ -203,6 +209,7 @@ public/
 | `/universities`    | University Matching   | AI-powered university recommendations                |
 | `/scholarships`    | Scholarship Finder    | Scholarship search + budget calculator               |
 | `/documents`       | Document Builder      | SOP, CV, recommendation letter generator             |
+| `/transcript`      | Transcript Evaluation | Upload & evaluate academic transcripts with AI       |
 | `/applications`    | Application Tracker   | Track application status across universities         |
 | `/predeparture`    | Pre-departure Guide   | Checklists, tips, cultural guides                    |
 | `/community`       | Community             | Student stories, alumni chat, groups                 |
@@ -334,7 +341,54 @@ Programs: Computer Science, Business, Engineering, Medicine, etc.
 
 ---
 
-### 6.5 Scholarship & Funding Engine
+### 6.5 Transcript Evaluation
+
+**Priority:** P1
+
+Helps students understand how their academic credentials translate across different education systems — critical for applications to universities in the UK, US, Canada, and Europe.
+
+**Features:**
+
+- Upload transcript (PDF/image) for AI analysis
+- GPA conversion across grading systems:
+  - Ghana (1st Class, 2nd Upper, etc.) → US 4.0 scale
+  - Ghana → UK classification
+  - Ghana → ECTS (Europe)
+  - Other West African systems supported
+- Credential equivalency assessment:
+  - How the degree is recognized in the target country
+  - Whether additional credential evaluation services are needed (e.g., WES, ENIC-NARIC)
+- Course-level breakdown:
+  - Subject areas mapped to target program requirements
+  - Prerequisite gap identification
+- Eligibility checks:
+  - "Does your transcript meet the minimum for this university?" — AI answer
+  - Comparison against target university requirements
+- Recommendations:
+  - Suggested credential evaluation agencies
+  - Tips to strengthen weak areas
+  - Additional certifications to consider
+- Download evaluation report as PDF
+
+**UI Elements:**
+
+- Drag-and-drop upload area
+- Progress indicator during AI analysis
+- Results displayed as a structured report card
+- Side-by-side original vs. converted grades
+- Eligibility badge per university (Meets / Partially Meets / Below Requirement)
+
+**Dummy Data (for development):**
+
+```
+Sample Ghana university transcript (BSc Computer Science, CGPA 3.4/4.0)
+Pre-computed GPA conversions for 5 grading systems
+3 sample university eligibility checks
+```
+
+---
+
+### 6.6 Scholarship & Funding Engine
 
 **Priority:** P1
 
@@ -361,7 +415,7 @@ Budget scenarios for 5 countries
 
 ---
 
-### 6.6 Visa Success System
+### 6.7 Visa Success System
 
 **Priority:** P1
 
@@ -380,7 +434,7 @@ Budget scenarios for 5 countries
 
 ---
 
-### 6.7 Application Tracker Dashboard
+### 6.8 Application Tracker Dashboard
 
 **Priority:** P1
 
@@ -403,7 +457,7 @@ Budget scenarios for 5 countries
 
 ---
 
-### 6.8 Pre-departure & Life Abroad Guide
+### 6.9 Pre-departure & Life Abroad Guide
 
 **Priority:** P2
 
@@ -420,7 +474,7 @@ Budget scenarios for 5 countries
 
 ---
 
-### 6.9 Community & Social Proof
+### 6.10 Community & Social Proof
 
 **Priority:** P2
 
@@ -439,7 +493,7 @@ Budget scenarios for 5 countries
 
 ---
 
-### 6.10 Admin Panel (Future — v2)
+### 6.11 Admin Panel (Future — v2)
 
 **Priority:** P3
 
@@ -463,6 +517,7 @@ Budget scenarios for 5 countries
 | Visa interview trainer   | ❌          | ✅             |
 | SOP/CV builder           | ❌          | ✅             |
 | Scholarship matching     | ❌          | ✅             |
+| Transcript evaluation    | ✅ (1 eval) | ✅ (unlimited) |
 | Application tracker      | ✅ (3 apps) | ✅ (unlimited) |
 | Document downloads       | ❌          | ✅             |
 | Premium counseling       | ❌          | ✅             |
@@ -485,7 +540,8 @@ Budget scenarios for 5 countries
 🎓 Universities       → /universities
 💰 Scholarships       → /scholarships
 📄 Documents          → /documents
-📋 Applications       → /applications
+� Transcript         → /transcript
+�📋 Applications       → /applications
 ✈️  Pre-departure      → /predeparture
 👥 Community          → /community
 👤 Profile            → /profile
@@ -535,6 +591,7 @@ All pages should render with realistic dummy data during development. Dummy data
 
 - 20 universities with tuition, acceptance rates, locations
 - 15 scholarships with amounts, deadlines, eligibility
+- Sample transcript evaluation with GPA conversions
 - 15 visa interview questions (Ghana-specific)
 - 8 student testimonials
 - 5 sample applications with status timelines
