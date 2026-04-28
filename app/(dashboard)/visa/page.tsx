@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import {
@@ -119,21 +120,29 @@ function SetupScreen({
                         <p className="mt-1 text-[13px] text-text-secondary">
                             Questioning style varies by destination. Pick the country for your current visa plan.
                         </p>
-                        <div className="mt-4 grid gap-2 sm:grid-cols-3 xl:grid-cols-5">
+                        <div className="mt-4 grid gap-3 sm:grid-cols-3 xl:grid-cols-5">
                             {visaCountries.map((item) => (
                                 <button
                                     key={item.value}
                                     type="button"
                                     onClick={() => setCountry(item.value)}
                                     className={cn(
-                                        "rounded-lg border px-3 py-3 text-left transition-colors",
+                                        "flex flex-col items-center justify-center rounded-xl border px-3 py-4 text-center transition-all duration-300",
                                         item.value === country
-                                            ? "border-primary bg-primary/6 text-primary"
-                                            : "border-border bg-white text-text-secondary hover:border-primary/30"
+                                            ? "border-[#1f639b] bg-[#1f639b]/5 shadow-sm ring-1 ring-[#1f639b]/20"
+                                            : "border-slate-200 bg-white hover:border-[#1f639b]/30 hover:shadow-sm"
                                     )}
                                 >
-                                    <div className="text-lg">{item.flag}</div>
-                                    <p className="mt-1.5 text-[13px] font-medium">{item.label}</p>
+                                    <div className="relative mb-2 flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-slate-50 ring-2 ring-slate-100 shadow-sm transition-transform duration-300 hover:scale-110">
+                                        <Image
+                                            src={item.flagUrl}
+                                            alt={item.label}
+                                            fill
+                                            className="object-cover"
+                                            sizes="40px"
+                                        />
+                                    </div>
+                                    <p className={cn("text-[13px] font-semibold transition-colors duration-300", item.value === country ? "text-[#1f639b]" : "text-slate-700")}>{item.label}</p>
                                 </button>
                             ))}
                         </div>
@@ -145,27 +154,36 @@ function SetupScreen({
                         <p className="mt-1 text-[13px] text-text-secondary">
                             Quick to warm up, standard to rehearse, or full simulation for refusal-risk pressure.
                         </p>
-                        <div className="mt-4 grid gap-2 md:grid-cols-3">
-                            {interviewModes.map((item) => (
-                                <button
-                                    key={item.value}
-                                    type="button"
-                                    onClick={() => setMode(item.value)}
-                                    className={cn(
-                                        "rounded-lg border px-4 py-3 text-left transition-colors",
-                                        item.value === mode
-                                            ? "border-primary bg-primary text-white"
-                                            : "border-border bg-white text-text-secondary hover:border-primary/30"
-                                    )}
-                                >
-                                    <p className={cn("text-[13px] font-semibold", item.value === mode ? "text-white" : "text-text-primary")}>
-                                        {item.label}
-                                    </p>
-                                    <p className={cn("mt-1 text-xs", item.value === mode ? "text-white/75" : "text-text-muted")}>
-                                        {item.questions} questions, {item.duration}
-                                    </p>
-                                </button>
-                            ))}
+                        <div className="mt-4 grid gap-3 md:grid-cols-3">
+                            {interviewModes.map((item) => {
+                                const Icon = item.value === "quick" ? SparklesIcon : item.value === "standard" ? Target01Icon : Shield01Icon;
+                                return (
+                                    <button
+                                        key={item.value}
+                                        type="button"
+                                        onClick={() => setMode(item.value)}
+                                        className={cn(
+                                            "group relative flex flex-col rounded-xl border p-4 text-left transition-all duration-300",
+                                            item.value === mode
+                                                ? "border-[#1f639b] bg-[#1f639b]/5 ring-1 ring-[#1f639b]/20 shadow-sm"
+                                                : "border-slate-200 bg-white hover:border-[#1f639b]/30 hover:shadow-sm"
+                                        )}
+                                    >
+                                        <div className={cn(
+                                            "mb-3 flex h-10 w-10 items-center justify-center rounded-lg transition-colors duration-300",
+                                            item.value === mode ? "bg-[#1f639b] text-white shadow-sm" : "bg-slate-100 text-slate-500 group-hover:bg-[#1f639b]/10 group-hover:text-[#1f639b]"
+                                        )}>
+                                            <Icon size={20} strokeWidth={2} />
+                                        </div>
+                                        <p className={cn("text-[14px] font-bold transition-colors duration-300", item.value === mode ? "text-[#1f639b]" : "text-slate-900")}>
+                                            {item.label}
+                                        </p>
+                                        <p className={cn("mt-1 text-xs leading-relaxed transition-colors duration-300", item.value === mode ? "text-[#1f639b]/80" : "text-slate-500")}>
+                                            {item.questions} questions, {item.duration}
+                                        </p>
+                                    </button>
+                                );
+                            })}
                         </div>
                     </div>
 

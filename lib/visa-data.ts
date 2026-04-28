@@ -20,12 +20,12 @@ export interface InterviewFeedback {
 export type InterviewMode = "quick" | "standard" | "full";
 export type VisaCountry = "uk" | "usa" | "canada" | "australia" | "germany";
 
-export const visaCountries: { value: VisaCountry; label: string; flag: string }[] = [
-    { value: "uk", label: "United Kingdom", flag: "🇬🇧" },
-    { value: "usa", label: "United States", flag: "🇺🇸" },
-    { value: "canada", label: "Canada", flag: "🇨🇦" },
-    { value: "australia", label: "Australia", flag: "🇦🇺" },
-    { value: "germany", label: "Germany", flag: "🇩🇪" },
+export const visaCountries: { value: VisaCountry; label: string; flagUrl: string }[] = [
+    { value: "uk", label: "United Kingdom", flagUrl: "https://cdn.countryflags.com/thumbs/united-kingdom/flag-square-500.png" },
+    { value: "usa", label: "United States", flagUrl: "https://cdn.countryflags.com/thumbs/united-states-of-america/flag-square-500.png" },
+    { value: "canada", label: "Canada", flagUrl: "https://cdn.countryflags.com/thumbs/canada/flag-square-500.png" },
+    { value: "australia", label: "Australia", flagUrl: "https://cdn.countryflags.com/thumbs/australia/flag-square-500.png" },
+    { value: "germany", label: "Germany", flagUrl: "https://cdn.countryflags.com/thumbs/germany/flag-square-500.png" },
 ];
 
 export const interviewModes: { value: InterviewMode; label: string; questions: number; duration: string }[] = [

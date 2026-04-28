@@ -153,69 +153,61 @@ export function Hero() {
                         </div>
                     </div>
 
-                    {/* Right — Image panel */}
-                    <div className="relative hidden lg:block">
-                        {/* Main image */}
-                        <div className="relative aspect-[4/3] overflow-hidden rounded-3xl shadow-2xl shadow-primary/10">
+                    {/* Right — Image panel (Orbiting Flags) */}
+                    <div className="relative hidden lg:flex items-center justify-center min-h-[600px] w-full">
+                        {/* Outer Ring */}
+                        <div className="absolute w-[540px] h-[540px] rounded-full border border-slate-200/80" />
+                        
+                        {/* Outer Ring Flags */}
+                        <div className="absolute w-[540px] h-[540px] pointer-events-none">
+                            {/* USA - Top Left */}
+                            <div className="absolute w-14 h-14 bg-white rounded-full shadow-lg p-1.5 flex items-center justify-center -translate-x-1/2 -translate-y-1/2 pointer-events-auto transition-transform hover:scale-110" style={{ top: '14.64%', left: '14.64%' }}>
+                                <Image src={destinationFlags.find(f => f.code === 'USA')?.src || ''} alt="USA" width={42} height={42} className="rounded-full object-cover" />
+                            </div>
+                            {/* UK - Top Right */}
+                            <div className="absolute w-16 h-16 bg-white rounded-full shadow-xl p-2 flex items-center justify-center -translate-x-1/2 -translate-y-1/2 pointer-events-auto transition-transform hover:scale-110" style={{ top: '14.64%', left: '85.35%' }}>
+                                <Image src={destinationFlags.find(f => f.code === 'UK')?.src || ''} alt="UK" width={48} height={48} className="rounded-full object-cover" />
+                            </div>
+                            {/* Australia - Bottom Left */}
+                            <div className="absolute w-12 h-12 bg-white rounded-full shadow-md p-1 flex items-center justify-center -translate-x-1/2 -translate-y-1/2 pointer-events-auto transition-transform hover:scale-110" style={{ top: '85.35%', left: '14.64%' }}>
+                                <Image src={destinationFlags.find(f => f.code === 'AUS')?.src || ''} alt="Australia" width={36} height={36} className="rounded-full object-cover" />
+                            </div>
+                            {/* Canada - Bottom Right */}
+                            <div className="absolute w-14 h-14 bg-white rounded-full shadow-lg p-1.5 flex items-center justify-center -translate-x-1/2 -translate-y-1/2 pointer-events-auto transition-transform hover:scale-110" style={{ top: '85.35%', left: '85.35%' }}>
+                                <Image src={destinationFlags.find(f => f.code === 'CAN')?.src || ''} alt="Canada" width={42} height={42} className="rounded-full object-cover" />
+                            </div>
+                        </div>
+
+                        {/* Inner Ring */}
+                        <div className="absolute w-[400px] h-[400px] rounded-full border border-slate-200/80" />
+
+                        {/* Inner Ring Flags */}
+                        <div className="absolute w-[400px] h-[400px] pointer-events-none">
+                            {/* Germany - Top */}
+                            <div className="absolute w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center -translate-x-1/2 -translate-y-1/2 p-1.5 pointer-events-auto transition-transform hover:scale-110" style={{ top: '0%', left: '50%' }}>
+                                <Image src={destinationFlags.find(f => f.code === 'DEU')?.src || ''} alt="Germany" width={36} height={36} className="rounded-full object-cover" />
+                            </div>
+                            {/* UAE - Bottom */}
+                            <div className="absolute w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center -translate-x-1/2 -translate-y-1/2 p-1.5 pointer-events-auto transition-transform hover:scale-110" style={{ top: '100%', left: '50%' }}>
+                                <Image src={destinationFlags.find(f => f.code === 'UAE')?.src || ''} alt="UAE" width={36} height={36} className="rounded-full object-cover" />
+                            </div>
+                        </div>
+
+                        {/* Center Student Image */}
+                        <div className="relative z-10 w-[280px] h-[280px] rounded-full overflow-hidden border-[6px] border-white shadow-2xl shadow-[#1f639b]/20 bg-slate-100">
                             <Image
-                                src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&h=1000&fit=crop&crop=faces"
-                                alt="Happy students studying abroad together"
+                                src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=500&h=500&fit=crop&crop=faces"
+                                alt="Student studying abroad"
                                 fill
                                 className="object-cover"
-                                sizes="(max-width: 1024px) 0vw, 50vw"
                                 priority
                             />
-                            {/* Gradient overlay */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-primary-dark/40 via-transparent to-transparent" />
                         </div>
-
-                        {/* Muted stats strip below image */}
-                        <div className="mt-4 grid grid-cols-3 gap-4 rounded-2xl border border-border/70 bg-surface/90 px-5 py-4">
-                            <div>
-                                <p className="text-xs font-medium uppercase tracking-wide text-text-muted/90">
-                                    Visa Success Rate
-                                </p>
-                                <p className="mt-1 text-2xl font-semibold text-text-secondary">95%</p>
-                            </div>
-                            <div className="border-x border-border/80 px-4">
-                                <p className="text-xs font-medium uppercase tracking-wide text-text-muted/90">
-                                    Universities
-                                </p>
-                                <p className="mt-1 text-2xl font-semibold text-text-secondary">500+</p>
-                            </div>
-                            <div>
-                                <p className="text-xs font-medium uppercase tracking-wide text-text-muted/90">
-                                    Countries
-                                </p>
-                                <p className="mt-1 text-2xl font-semibold text-text-secondary">50+</p>
-                            </div>
-                        </div>
-
-                        {/* Small floating card — top right */}
-                        <div className="absolute -top-4 -right-4 z-10 flex items-center gap-3 rounded-2xl bg-white p-4 shadow-lg border border-border/40">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10">
-                                <Shield01Icon size={20} className="text-accent" />
-                            </div>
-                            <div>
-                                <p className="text-sm font-semibold text-text-primary">
-                                    Visa Approved
-                                </p>
-                                <p className="text-xs text-text-muted">Just now · UK</p>
-                            </div>
-                        </div>
-
-                        {/* Small floating card — left */}
-                        <div className="absolute top-1/3 -left-8 z-10 flex items-center gap-3 rounded-2xl bg-white p-4 shadow-lg border border-border/40">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-                                <GraduationScrollIcon size={20} className="text-primary" />
-                            </div>
-                            <div>
-                                <p className="text-sm font-semibold text-text-primary">
-                                    Admitted!
-                                </p>
-                                <p className="text-xs text-text-muted">Oxford · UK</p>
-                            </div>
-                        </div>
+                        
+                        {/* Decorative floating dots */}
+                        <div className="absolute w-3 h-3 bg-red-400 rounded-full shadow-lg shadow-red-400/50" style={{ top: '30%', right: '22%' }} />
+                        <div className="absolute w-2 h-2 bg-blue-500 rounded-full shadow-lg shadow-blue-500/50" style={{ bottom: '28%', left: '22%' }} />
+                        <div className="absolute w-1.5 h-1.5 bg-emerald-400 rounded-full" style={{ top: '25%', left: '32%' }} />
                     </div>
                 </div>
 

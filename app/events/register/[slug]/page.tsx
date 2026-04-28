@@ -4,16 +4,14 @@ import { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { 
-    ArrowLeft01Icon, 
-    Calendar01Icon, 
-    Location01Icon, 
-    Tick01Icon,
-    InformationCircleIcon
+import {
+    ArrowLeft01Icon,
+    Calendar01Icon,
+    Location01Icon,
+    CheckmarkCircle01Icon,
 } from "hugeicons-react";
 import { events } from "@/data/events";
 import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 
@@ -33,9 +31,9 @@ export default function RegisterEventPage() {
         return (
             <>
                 <Navbar />
-                <div className="flex min-h-[60vh] flex-col items-center justify-center bg-surface/30 p-4">
-                    <h1 className="text-2xl font-bold text-text-primary">Event not found</h1>
-                    <Link href="/" className="mt-4 text-primary hover:underline">
+                <div className="flex min-h-[60vh] flex-col items-center justify-center bg-surface p-4">
+                    <h1 className="text-lg font-semibold text-text-primary">Event not found</h1>
+                    <Link href="/" className="mt-3 text-sm text-primary hover:underline">
                         Return to home
                     </Link>
                 </div>
@@ -47,7 +45,6 @@ export default function RegisterEventPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
-        // Simulate API call
         await new Promise((resolve) => setTimeout(resolve, 1500));
         setIsLoading(false);
         setIsSubmitted(true);
@@ -57,19 +54,31 @@ export default function RegisterEventPage() {
         return (
             <>
                 <Navbar />
-                <div className="flex min-h-[80vh] items-center justify-center bg-surface/30 p-4">
-                    <div className="w-full max-w-md scale-in-center rounded-3xl bg-white p-8 text-center shadow-2xl shadow-primary/5">
-                        <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-success/10 text-success">
-                            <Tick01Icon size={40} />
+                <div className="flex min-h-[70vh] items-center justify-center bg-surface px-4">
+                    <div className="w-full max-w-sm rounded-xl border border-border bg-white p-8 text-center">
+                        <div className="mx-auto mb-4 flex h-11 w-11 items-center justify-center rounded-full bg-accent/10 text-accent">
+                            <CheckmarkCircle01Icon size={24} />
                         </div>
-                        <h2 className="mb-2 text-2xl font-bold text-text-primary">Registration Successful!</h2>
-                        <p className="mb-8 text-text-secondary">
-                            Thank you for registering for <span className="font-semibold text-primary">{event.title}</span>. 
-                            We've sent a confirmation email with all the details.
+                        <h2 className="text-lg font-semibold text-text-primary">You&apos;re registered</h2>
+                        <p className="mt-2 text-sm text-text-secondary">
+                            A confirmation for <span className="font-medium text-text-primary">{event.title}</span> has been sent to your email.
                         </p>
-                        <Button fullWidth onClick={() => router.push("/")} size="lg">
-                            Back to Home
-                        </Button>
+                        <div className="mt-6 flex flex-col gap-2">
+                            <button
+                                onClick={() => router.push("/")}
+                                className="rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-dark"
+                            >
+                                Back to home
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setIsSubmitted(false);
+                                }}
+                                className="rounded-lg px-4 py-2.5 text-sm font-medium text-text-secondary transition-colors hover:bg-surface hover:text-text-primary"
+                            >
+                                Edit registration
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <Footer />
@@ -80,170 +89,166 @@ export default function RegisterEventPage() {
     return (
         <>
             <Navbar />
-            <main className="min-h-screen bg-surface/30 selection:bg-primary/10">
-                <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-                    {/* Back Button */}
-                    <Link 
-                        href="/#events" 
-                        className="group mb-8 inline-flex items-center gap-2 text-sm font-semibold text-text-secondary transition-colors hover:text-primary"
+            <main className="flex-1 bg-surface pb-16 pt-8">
+                <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+                    {/* Back link */}
+                    <Link
+                        href="/#events"
+                        className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-text-secondary transition-colors hover:text-text-primary"
                     >
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-white transition-all group-hover:border-primary/30 group-hover:bg-primary/5 group-hover:text-primary">
-                            <ArrowLeft01Icon size={18} />
-                        </div>
-                        Back to Events
+                        <ArrowLeft01Icon size={15} />
+                        Back to events
                     </Link>
 
-                    <div className="grid gap-8 lg:grid-cols-12">
-                        {/* Left Column: Event Info */}
-                        <div className="lg:col-span-5">
-                            <div className="sticky top-24 space-y-6">
-                                <div className="overflow-hidden rounded-3xl border border-border/50 bg-white shadow-xl shadow-primary/5">
-                                    <div className="relative aspect-[16/10] w-full">
-                                        <Image 
-                                            src={event.image} 
-                                            alt={event.title} 
-                                            fill 
-                                            className="object-cover"
-                                            priority
-                                        />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                                        <div className="absolute left-6 top-6 rounded-2xl bg-white/95 px-4 py-2 text-center shadow-2xl backdrop-blur-md">
-                                            <span className="block text-xs font-bold uppercase tracking-widest text-primary">
-                                                {event.monthLabel}
-                                            </span>
-                                            <span className="text-2xl font-black text-text-primary">
-                                                {event.dateLabel.split(" ")[0]}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <div className="p-8">
-                                        <h1 className="mb-4 text-2xl font-bold leading-tight text-text-primary">
-                                            {event.title}
-                                        </h1>
-                                        <p className="mb-8 text-text-secondary leading-relaxed">
-                                            {event.summary}
-                                        </p>
-
-                                        <div className="space-y-4">
-                                            <div className="flex items-center gap-4 rounded-2xl bg-surface/50 p-4">
-                                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-primary shadow-sm">
-                                                    <Calendar01Icon size={20} />
-                                                </div>
-                                                <div>
-                                                    <span className="block text-[10px] font-bold uppercase tracking-wider text-text-muted">Date & Time</span>
-                                                    <span className="text-sm font-bold text-text-primary">{event.dateLabel}</span>
-                                                </div>
-                                            </div>
-
-                                            <div className="flex items-center gap-4 rounded-2xl bg-surface/50 p-4">
-                                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-primary shadow-sm">
-                                                    <Location01Icon size={20} />
-                                                </div>
-                                                <div>
-                                                    <span className="block text-[10px] font-bold uppercase tracking-wider text-text-muted">Location</span>
-                                                    <span className="text-sm font-bold text-text-primary">{event.location}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                    <div className="grid gap-6 lg:grid-cols-[1fr_340px] items-start">
+                        {/* Form column */}
+                        <div className="rounded-xl border border-border bg-white overflow-hidden">
+                            {/* Event banner */}
+                            <div className="relative h-48 w-full bg-surface">
+                                <Image
+                                    src={event.image}
+                                    alt={event.title}
+                                    fill
+                                    className="object-cover"
+                                    sizes="(max-width: 1024px) 100vw, 640px"
+                                    priority
+                                />
                             </div>
-                        </div>
 
-                        {/* Right Column: Registration Form */}
-                        <div className="lg:col-span-7">
-                            <div className="rounded-3xl border border-border/50 bg-white p-8 shadow-xl shadow-primary/5 sm:p-10">
-                                <div className="mb-10">
-                                    <h2 className="text-2xl font-bold text-text-primary">Register for this Event</h2>
-                                    <p className="mt-2 text-text-secondary">
-                                        Please fill out the form below to secure your spot.
-                                    </p>
+                            <div className="p-5 sm:p-6">
+                                <h1 className="text-lg font-semibold text-text-primary">{event.title}</h1>
+                                <p className="mt-1 text-sm text-text-secondary">{event.summary}</p>
+
+                                <div className="mt-5 flex flex-wrap items-center gap-4 text-xs text-text-secondary">
+                                    <span className="inline-flex items-center gap-1.5">
+                                        <Calendar01Icon size={14} className="text-primary" />
+                                        {event.dateLabel}
+                                    </span>
+                                    <span className="inline-flex items-center gap-1.5">
+                                        <Location01Icon size={14} className="text-primary" />
+                                        {event.location}
+                                    </span>
                                 </div>
 
-                                <form onSubmit={handleSubmit} className="space-y-6">
-                                    <div className="grid gap-6 sm:grid-cols-2">
-                                        <Input 
-                                            label="Full Name" 
-                                            placeholder="John Doe" 
-                                            required 
+                                {/* Divider */}
+                                <div className="my-6 border-t border-border" />
+
+                                {/* Registration form */}
+                                <div className="mb-1">
+                                    <h2 className="text-[15px] font-semibold text-text-primary">Your details</h2>
+                                    <p className="mt-0.5 text-xs text-text-muted">Fill in the form to secure your spot.</p>
+                                </div>
+
+                                <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+                                    <div className="grid gap-4 sm:grid-cols-2">
+                                        <Input
+                                            label="Full name"
+                                            placeholder="Ernest Owusu Darko"
+                                            required
                                             name="name"
                                         />
-                                        <Input 
-                                            label="Email Address" 
-                                            type="email" 
-                                            placeholder="john@example.com" 
-                                            required 
+                                        <Input
+                                            label="Email address"
+                                            type="email"
+                                            placeholder="you@example.com"
+                                            required
                                             name="email"
                                         />
                                     </div>
 
-                                    <div className="grid gap-6 sm:grid-cols-2">
-                                        <Input 
-                                            label="Phone Number" 
-                                            type="tel" 
-                                            placeholder="+233 XX XXX XXXX" 
-                                            required 
+                                    <div className="grid gap-4 sm:grid-cols-2">
+                                        <Input
+                                            label="Phone number"
+                                            type="tel"
+                                            placeholder="+233 24 006 7412"
+                                            required
                                             name="phone"
                                         />
-                                        <Input 
-                                            label="Institution/School" 
-                                            placeholder="University of Ghana" 
-                                            required 
+                                        <Input
+                                            label="Institution"
+                                            placeholder="University of Ghana"
+                                            required
                                             name="institution"
                                         />
                                     </div>
 
-                                    <div className="w-full">
-                                        <label className="mb-1.5 block text-sm font-medium text-text-primary">
-                                            Why are you attending?
+                                    <div>
+                                        <label htmlFor="reason" className="mb-1 block text-sm font-medium text-text-primary">
+                                            Why are you attending? <span className="text-text-muted font-normal">(optional)</span>
                                         </label>
-                                        <textarea 
-                                            className="min-h-[120px] w-full rounded-lg border border-border bg-white px-4 py-3 text-sm text-text-primary placeholder:text-text-muted transition-colors duration-200 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                                            placeholder="Tell us what you hope to learn or achieve..."
+                                        <textarea
+                                            id="reason"
+                                            rows={3}
+                                            className="w-full rounded-lg border border-border bg-white px-3 py-2.5 text-sm text-text-primary placeholder:text-text-muted transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none"
+                                            placeholder="What you hope to learn or achieve..."
                                             name="reason"
-                                        ></textarea>
+                                        />
                                     </div>
 
-                                    <div className="rounded-2xl bg-primary/5 p-4 text-[13px] leading-relaxed text-text-secondary">
-                                        <div className="mb-1 flex items-center gap-2 font-bold text-primary">
-                                            <InformationCircleIcon size={16} />
-                                            Note:
-                                        </div>
-                                        A confirmation email will be sent to your provided email address. Please make sure to check your inbox (and spam folder) for further instructions.
-                                    </div>
-
-                                    <Button 
-                                        type="submit" 
-                                        fullWidth 
-                                        size="lg" 
+                                    <button
+                                        type="submit"
                                         disabled={isLoading}
-                                        className="relative h-14 overflow-hidden"
+                                        className="w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-dark disabled:opacity-60 disabled:cursor-not-allowed"
                                     >
                                         {isLoading ? (
-                                            <span className="flex items-center gap-2">
-                                                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                                                Processing...
+                                            <span className="inline-flex items-center gap-2">
+                                                <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                                                Registering...
                                             </span>
                                         ) : (
-                                            "Complete Registration"
+                                            "Complete registration"
                                         )}
-                                    </Button>
+                                    </button>
                                 </form>
                             </div>
                         </div>
+
+                        {/* Sidebar */}
+                        <aside className="space-y-4 lg:sticky lg:top-24">
+                            <div className="rounded-xl border border-border bg-white overflow-hidden">
+                                <div className="border-b border-border px-4 py-3">
+                                    <h3 className="text-[13px] font-semibold text-text-primary">Event details</h3>
+                                </div>
+                                <div className="divide-y divide-border">
+                                    <div className="px-4 py-3">
+                                        <p className="text-[11px] text-text-muted">Event</p>
+                                        <p className="mt-0.5 text-sm font-medium text-text-primary">{event.title}</p>
+                                    </div>
+                                    <div className="px-4 py-3">
+                                        <p className="text-[11px] text-text-muted">Date</p>
+                                        <p className="mt-0.5 text-sm font-medium text-text-primary">{event.dateLabel}</p>
+                                    </div>
+                                    <div className="px-4 py-3">
+                                        <p className="text-[11px] text-text-muted">Location</p>
+                                        <p className="mt-0.5 text-sm font-medium text-text-primary">{event.location}</p>
+                                    </div>
+                                    <div className="px-4 py-3">
+                                        <p className="text-[11px] text-text-muted">Price</p>
+                                        <p className="mt-0.5 text-sm font-medium text-accent">Free</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="rounded-xl border border-border bg-white px-4 py-4">
+                                <p className="text-[13px] font-semibold text-text-primary mb-2.5">Good to know</p>
+                                <ul className="space-y-2 text-xs text-text-secondary">
+                                    <li className="flex gap-2">
+                                        <CheckmarkCircle01Icon size={14} className="text-accent shrink-0 mt-px" />
+                                        Confirmation email with joining details sent after registration.
+                                    </li>
+                                    <li className="flex gap-2">
+                                        <CheckmarkCircle01Icon size={14} className="text-accent shrink-0 mt-px" />
+                                        Spots are limited; register early to guarantee attendance.
+                                    </li>
+                                    <li className="flex gap-2">
+                                        <CheckmarkCircle01Icon size={14} className="text-accent shrink-0 mt-px" />
+                                        Recording shared with registered attendees who can&apos;t join live.
+                                    </li>
+                                </ul>
+                            </div>
+                        </aside>
                     </div>
                 </div>
-
-                <style jsx>{`
-                    @keyframes scaleIn {
-                        from { opacity: 0; transform: scale(0.95); }
-                        to { opacity: 1; transform: scale(1); }
-                    }
-                    .scale-in-center {
-                        animation: scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-                    }
-                `}</style>
             </main>
             <Footer />
         </>

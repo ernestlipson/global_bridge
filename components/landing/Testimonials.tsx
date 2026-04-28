@@ -38,11 +38,11 @@ const testimonials = [
 
 function StarRow() {
     return (
-        <div className="flex gap-0.5">
+        <div className="flex gap-1">
             {Array.from({ length: 5 }).map((_, i) => (
                 <HonourStarIcon
                     key={i}
-                    size={14}
+                    size={16}
                     className="fill-amber-400 text-amber-400"
                 />
             ))}
@@ -54,47 +54,51 @@ export function Testimonials() {
     const [featured, ...rest] = testimonials;
 
     return (
-        <section id="testimonials" className="bg-surface py-24 sm:py-32">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <section id="testimonials" className="relative overflow-hidden bg-slate-50/50 py-24 sm:py-32">
+            {/* Soft background accents */}
+            <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/3 w-[800px] h-[400px] bg-[#1f639b]/5 blur-[100px] rounded-full pointer-events-none" />
+            <div className="absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/3 w-[600px] h-[600px] bg-[#2d8a4e]/5 blur-[120px] rounded-full pointer-events-none" />
+
+            <div className="mx-auto max-w-[90rem] px-4 sm:px-6 lg:px-8 relative z-10">
                 {/* Section header */}
-                <div className="mx-auto max-w-2xl text-center">
-                    <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+                <div className="mx-auto max-w-3xl text-center">
+                    <span className="inline-flex items-center justify-center rounded-full border border-[#1f639b]/20 bg-[#1f639b]/5 px-4 py-1.5 text-sm font-medium text-[#1f639b] mb-6">
                         Student Success Stories
                     </span>
-                    <h2 className="mt-4 text-3xl font-bold tracking-tight text-text-primary sm:text-4xl lg:text-[2.75rem]">
+                    <h2 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl lg:text-[3.5rem] leading-[1.1]">
                         Hear from students who made it
                     </h2>
-                    <p className="mt-5 text-base leading-relaxed text-text-secondary sm:text-[1.05rem]">
+                    <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-slate-500">
                         Real students, real results. See how GlobalBridge helped them
                         achieve their study abroad dreams.
                     </p>
                 </div>
 
                 {/* Featured + rest layout */}
-                <div className="mt-16 grid gap-6 lg:grid-cols-5">
+                <div className="mt-20 grid gap-8 lg:grid-cols-5">
                     {/* Featured testimonial — spans 2 cols */}
-                    <div className="flex flex-col justify-between rounded-2xl border border-border/50 bg-white p-7 sm:p-8 lg:col-span-2">
-                        <div>
+                    <div className="group relative flex flex-col justify-between overflow-hidden rounded-[1rem] bg-white p-5 sm:p-6 lg:col-span-2 shadow-sm ring-1 ring-slate-200/50 transition-transform duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-[#1f639b]/10 hover:ring-[#1f639b]/20">
+                        <div className="relative z-10">
                             <StarRow />
-                            <p className="mt-5 text-lg font-medium leading-relaxed text-text-primary">
+                            <p className="mt-4 text-lg font-medium leading-relaxed text-slate-900 group-hover:text-[#1f639b] transition-colors duration-300">
                                 &ldquo;{featured.quote}&rdquo;
                             </p>
                         </div>
-                        <div className="mt-8 flex items-center gap-4">
-                            <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-full ring-2 ring-primary/10">
+                        <div className="relative z-10 mt-6 flex items-center gap-3 pt-5 border-t border-slate-100">
+                            <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-full ring-2 ring-[#2d8a4e]/20">
                                 <Image
                                     src={featured.image}
                                     alt={featured.name}
                                     fill
                                     className="object-cover"
-                                    sizes="48px"
+                                    sizes="40px"
                                 />
                             </div>
                             <div>
-                                <p className="text-sm font-semibold text-text-primary">
+                                <p className="text-[13px] font-bold text-slate-900 group-hover:text-[#1f639b] transition-colors">
                                     {featured.name}
                                 </p>
-                                <p className="text-xs text-text-muted">
+                                <p className="mt-0.5 text-[10px] font-medium uppercase tracking-wider text-slate-400">
                                     {featured.university}
                                 </p>
                             </div>
@@ -102,31 +106,31 @@ export function Testimonials() {
                     </div>
 
                     {/* Remaining testimonials */}
-                    <div className="grid gap-6 sm:grid-cols-3 lg:col-span-3">
+                    <div className="grid gap-4 sm:grid-cols-3 lg:col-span-3">
                         {rest.map((t) => (
                             <div
                                 key={t.name}
-                                className="flex flex-col rounded-2xl border border-border/50 bg-white p-6 transition-shadow duration-200 ease-out hover:shadow-md"
+                                className="group relative flex flex-col rounded-[1rem] bg-white p-5 ring-1 ring-slate-200/50 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-[#1f639b]/10 hover:ring-[#1f639b]/20"
                             >
                                 <StarRow />
-                                <p className="mt-4 flex-1 text-sm leading-relaxed text-text-secondary">
+                                <p className="mt-3 flex-1 text-[13px] leading-relaxed text-slate-600">
                                     &ldquo;{t.quote}&rdquo;
                                 </p>
-                                <div className="mt-6 flex items-center gap-3 border-t border-border/40 pt-4">
-                                    <div className="relative h-9 w-9 flex-shrink-0 overflow-hidden rounded-full ring-1 ring-border/60">
+                                <div className="mt-5 flex items-center gap-3 pt-4 border-t border-slate-100">
+                                    <div className="relative h-8 w-8 flex-shrink-0 overflow-hidden rounded-full ring-2 ring-[#2d8a4e]/20">
                                         <Image
                                             src={t.image}
                                             alt={t.name}
                                             fill
                                             className="object-cover"
-                                            sizes="36px"
+                                            sizes="32px"
                                         />
                                     </div>
                                     <div>
-                                        <p className="text-sm font-semibold text-text-primary">
+                                        <p className="text-[12px] font-bold text-slate-900 group-hover:text-[#1f639b] transition-colors">
                                             {t.name}
                                         </p>
-                                        <p className="text-xs text-text-muted">
+                                        <p className="mt-0.5 text-[9px] font-medium uppercase tracking-wider text-slate-400">
                                             {t.university}
                                         </p>
                                     </div>

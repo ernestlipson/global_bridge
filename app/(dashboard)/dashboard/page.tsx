@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import {
+    AiBrain01Icon,
     ArrowRight01Icon,
     Calendar01Icon,
     CameraMicrophone01Icon,
@@ -80,6 +81,23 @@ export default function DashboardPage() {
                     </div>
                 ))}
             </div>
+
+            {/* AI Chat card */}
+            <Link
+                href="/chat"
+                className="group mb-6 flex items-center gap-4 rounded-xl border border-border bg-white p-4 transition-colors hover:border-primary/20"
+            >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/8 text-primary">
+                    <AiBrain01Icon size={20} />
+                </div>
+                <div className="min-w-0 flex-1">
+                    <p className="text-[13px] font-semibold text-text-primary">Ask GlobalBridge AI</p>
+                    <p className="mt-0.5 text-xs text-text-secondary">
+                        Get instant answers about scholarships, visas, SOPs, or your applications.
+                    </p>
+                </div>
+                <ArrowRight01Icon size={15} className="shrink-0 text-text-muted group-hover:text-primary transition-colors" />
+            </Link>
 
             <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_280px]">
                 <div className="space-y-5">

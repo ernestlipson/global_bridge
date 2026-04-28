@@ -2,7 +2,6 @@
 
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
-import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { cn } from "@/lib/utils";
 import {
@@ -10,12 +9,10 @@ import {
     ArrowLeft01Icon,
     ArrowRight01Icon,
     CheckmarkCircle01Icon,
-    Clock01Icon,
     CreditCardIcon,
     Message01Icon,
     Shield01Icon,
     SparklesIcon,
-    AiUserIcon,
     CameraVideoIcon,
 } from "hugeicons-react";
 import Link from "next/link";
@@ -34,30 +31,30 @@ const consultationTypes: {
 }[] = [
         {
             id: "visa",
-            label: "Visa Strategy Session",
+            label: "Visa Strategy",
             duration: "45 min",
-            description: "Interview prep, refusal review, financial proof guidance, and embassy readiness.",
+            description: "Interview prep, refusal review, financial proof guidance.",
             icon: Shield01Icon,
         },
         {
             id: "admissions",
             label: "Admissions Advisory",
             duration: "60 min",
-            description: "School shortlist review, profile positioning, and application roadmap planning.",
+            description: "School shortlist, profile positioning, application roadmap.",
             icon: SparklesIcon,
         },
         {
             id: "scholarship",
             label: "Scholarship Planning",
             duration: "45 min",
-            description: "Funding strategy, eligibility matching, and timeline planning for scholarship cycles.",
+            description: "Funding strategy, eligibility matching, timeline planning.",
             icon: CreditCardIcon,
         },
         {
             id: "documents",
             label: "Document Review",
             duration: "30 min",
-            description: "SOP, CV, transcript positioning, and document gap review before submission.",
+            description: "SOP, CV, transcript review, and document gap check.",
             icon: Message01Icon,
         },
     ];
@@ -74,22 +71,22 @@ const pricingPlans: {
             id: "single",
             name: "Single Session",
             price: "GHS 150",
-            note: "Best for one focused consultation.",
-            features: ["1 live session", "Booking confirmation", "Session notes summary"],
+            note: "One focused consultation.",
+            features: ["1 live session", "Booking confirmation", "Session notes"],
         },
         {
             id: "priority",
             name: "Priority Session",
             price: "GHS 250",
             highlight: true,
-            note: "Faster scheduling with deeper advisory support.",
-            features: ["Priority slot", "1 live session", "Follow-up Q&A for 3 days"],
+            note: "Faster scheduling, deeper support.",
+            features: ["Priority slot", "1 live session", "3-day follow-up Q&A"],
         },
         {
             id: "bundle",
             name: "3-Session Bundle",
             price: "GHS 400",
-            note: "For students managing admissions and visa preparation together.",
+            note: "Admissions + visa prep together.",
             features: ["3 live sessions", "Progress tracking", "Personal action plan"],
         },
     ];
@@ -111,11 +108,11 @@ const timeSlots = [
     "6:00 PM",
 ];
 
-const formSteps: { id: FormStep; label: string; description: string }[] = [
-    { id: 1, label: "Consultation", description: "Choose the support you need" },
-    { id: 2, label: "Schedule", description: "Select a day and time" },
-    { id: 3, label: "Pricing", description: "Pick your package" },
-    { id: 4, label: "Details", description: "Add your contact info" },
+const formSteps: { id: FormStep; label: string }[] = [
+    { id: 1, label: "Type" },
+    { id: 2, label: "Schedule" },
+    { id: 3, label: "Pricing" },
+    { id: 4, label: "Details" },
 ];
 
 export default function ConsultationPage() {
@@ -138,8 +135,6 @@ export default function ConsultationPage() {
         () => pricingPlans.find((item) => item.id === selectedPlan) ?? pricingPlans[0],
         [selectedPlan]
     );
-    const progress = (currentStep / formSteps.length) * 100;
-    const currentStepMeta = formSteps[currentStep - 1];
 
     function canAdvance(step: FormStep) {
         if (step === 1) return !!selectedType;
@@ -149,26 +144,18 @@ export default function ConsultationPage() {
     }
 
     function goToNextStep() {
-        if (!canAdvance(currentStep) || currentStep === 4) {
-            return;
-        }
-
+        if (!canAdvance(currentStep) || currentStep === 4) return;
         setCurrentStep((prev) => (prev + 1) as FormStep);
     }
 
     function goToPreviousStep() {
-        if (currentStep === 1) {
-            return;
-        }
-
+        if (currentStep === 1) return;
         setCurrentStep((prev) => (prev - 1) as FormStep);
     }
 
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        if (!canAdvance(4)) {
-            return;
-        }
+        if (!canAdvance(4)) return;
         setSubmitted(true);
     }
 
@@ -188,104 +175,76 @@ export default function ConsultationPage() {
     return (
         <>
             <Navbar />
-            <main className="flex-1 bg-[radial-gradient(circle_at_top_left,_rgba(12,59,124,0.08),_transparent_28%),linear-gradient(180deg,_#f8fbff_0%,_#ffffff_45%,_#f8fafc_100%)]">
-                <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
-                    <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] xl:gap-12">
-                        <div>
-                            <div className="inline-flex items-center gap-2 rounded-full border border-primary/10 bg-white/80 px-3 py-1.5 text-xs font-semibold text-primary shadow-sm backdrop-blur">
-                                <Calendar01Icon size={14} />
-                                Book Your Consultation
-                            </div>
-                            <h1 className="mt-5 max-w-2xl text-3xl font-bold tracking-tight text-text-primary sm:text-4xl lg:text-5xl">
-                                Schedule a guided session with a GlobalBridge advisor.
-                            </h1>
-                            <p className="mt-4 max-w-2xl text-base leading-7 text-text-secondary sm:text-lg">
-                                Pick the kind of support you need, choose a time that works for you,
-                                and lock in the pricing model that matches your journey.
+            <main className="flex-1 bg-surface pb-16 pt-8">
+                <section className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+                    {/* Header */}
+                    {!submitted && (
+                        <div className="mb-6">
+                            <h1 className="text-xl font-semibold text-text-primary">Book a consultation</h1>
+                            <p className="mt-1 text-sm text-text-secondary">
+                                Pick a session type, choose a time, and confirm your booking.
                             </p>
-
-                            <div className="mt-8 grid gap-4 sm:grid-cols-3">
-                                <div className="rounded-2xl border border-border bg-white/90 p-4 shadow-sm">
-                                    <Clock01Icon size={18} className="text-primary" />
-                                    <p className="mt-3 text-sm font-semibold text-text-primary">Flexible Slots</p>
-                                    <p className="mt-1 text-sm text-text-muted">Morning and evening sessions for student schedules.</p>
-                                </div>
-                                <div className="rounded-2xl border border-border bg-white/90 p-4 shadow-sm">
-                                    <CameraVideoIcon size={18} className="text-accent" />
-                                    <p className="mt-3 text-sm font-semibold text-text-primary">Live Advisory</p>
-                                    <p className="mt-1 text-sm text-text-muted">One-on-one consultation tailored to your study abroad goals.</p>
-                                </div>
-                                <div className="rounded-2xl border border-border bg-white/90 p-4 shadow-sm">
-                                    <CreditCardIcon size={18} className="text-warning" />
-                                    <p className="mt-3 text-sm font-semibold text-text-primary">Clear Pricing</p>
-                                    <p className="mt-1 text-sm text-text-muted">Choose a single session, priority slot, or bundle.</p>
-                                </div>
-                            </div>
-
-                            <div className="mt-8 rounded-3xl border border-primary/10 bg-white/90 p-5 shadow-sm sm:p-6">
-                                <h2 className="text-lg font-semibold text-text-primary">Consultation Details</h2>
-                                <p className="mt-2 text-sm leading-6 text-text-secondary">
-                                    Your selected session is <span className="font-semibold text-text-primary">{activeType.label}</span>,
-                                    scheduled for <span className="font-semibold text-text-primary">{selectedDay}</span> at <span className="font-semibold text-text-primary">{selectedTime}</span>.
-                                    You are booking the <span className="font-semibold text-text-primary">{activePlan.name}</span> package at <span className="font-semibold text-primary">{activePlan.price}</span>.
-                                </p>
-                            </div>
                         </div>
+                    )}
 
-                        <div className="rounded-[28px] border border-border bg-white/95 p-5 shadow-[0_22px_70px_-24px_rgba(12,59,124,0.35)] backdrop-blur sm:p-6 lg:sticky lg:top-24 lg:h-fit">
-                            {!submitted ? (
-                                <form className="space-y-6" onSubmit={handleSubmit}>
-                                    <div>
-                                        <h2 className="text-xl font-semibold text-text-primary">Reserve your slot</h2>
-                                        <p className="mt-1 text-sm text-text-secondary">
-                                            Complete the form in steps. This is a booking UI with dummy data for now.
-                                        </p>
-                                    </div>
-
-                                    <div className="space-y-4 rounded-2xl border border-border bg-surface/80 p-4">
-                                        <div className="flex items-center justify-between text-xs font-medium text-text-muted">
-                                            <span>
-                                                Step {currentStep} of {formSteps.length}
-                                            </span>
-                                            <span>{Math.round(progress)}% complete</span>
-                                        </div>
-                                        <div className="h-2 rounded-full bg-border">
-                                            <div
-                                                className="h-full rounded-full bg-gradient-to-r from-primary to-accent transition-all duration-300"
-                                                style={{ width: `${progress}%` }}
-                                            />
-                                        </div>
-                                        <div className="rounded-xl border border-primary/20 bg-white p-3.5 sm:p-4">
-                                            <div className="flex items-start justify-between gap-3">
-                                                <div className="flex items-start gap-3">
-                                                    <span className="mt-0.5 flex h-7 w-7 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">
-                                                        {currentStepMeta.id}
+                    {!submitted ? (
+                        <div className="grid gap-6 lg:grid-cols-12 items-start">
+                            {/* Form column */}
+                            <div className="lg:col-span-8 rounded-xl border border-border bg-white overflow-hidden">
+                                {/* Step indicator */}
+                                <div className="bg-surface/50 border-b border-border p-4 sm:px-6">
+                                    <div className="flex items-center justify-between">
+                                        {formSteps.map((step, i) => {
+                                            const isCompleted = currentStep > step.id;
+                                            const isCurrent = currentStep === step.id;
+                                            return (
+                                                <div key={step.id} className="flex flex-col items-center relative z-10 w-full">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            if (isCompleted) setCurrentStep(step.id);
+                                                        }}
+                                                        className={cn(
+                                                            "flex h-8 w-8 items-center justify-center rounded-xl text-sm font-bold transition-all duration-300 relative",
+                                                            isCurrent && "bg-primary text-white",
+                                                            isCompleted && "bg-primary/10 text-primary cursor-pointer",
+                                                            !isCurrent && !isCompleted && "border-2 border-border text-text-muted bg-white"
+                                                        )}
+                                                    >
+                                                        {step.id}
+                                                    </button>
+                                                    <span className={cn(
+                                                        "mt-2 text-[10px] font-bold uppercase tracking-wider hidden sm:block transition-colors",
+                                                        isCurrent ? "text-primary" : isCompleted ? "text-text-primary" : "text-text-muted"
+                                                    )}>
+                                                        {step.label}
                                                     </span>
-                                                    <div>
-                                                        <p className="text-sm font-semibold text-text-primary">
-                                                            {currentStepMeta.label}
-                                                        </p>
-                                                        <p className="mt-0.5 text-xs leading-5 text-text-secondary">
-                                                            {currentStepMeta.description}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
-                                                    Current
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
 
+                                                    {/* Connecting Line */}
+                                                    {i < formSteps.length - 1 && (
+                                                        <div className="absolute top-4 left-[50%] right-[-50%] h-[2px] -z-10 bg-border">
+                                                            <div className={cn(
+                                                                "h-full bg-primary transition-all duration-500",
+                                                                isCompleted ? "w-full" : "w-0"
+                                                            )} />
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+
+                                <form onSubmit={handleSubmit} className="p-5 sm:p-6">
+                                    {/* Step 1: Consultation type */}
                                     {currentStep === 1 && (
-                                        <div className="space-y-3">
+                                        <div className="space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-500">
                                             <div>
-                                                <label className="block text-sm font-medium text-text-primary">Consultation type</label>
-                                                <p className="mt-1 text-sm text-text-secondary">
-                                                    Start with the service that best matches the decision you need help making.
-                                                </p>
+                                                <h2 className="text-lg font-bold text-text-primary">What do you need help with?</h2>
+                                                <p className="mt-1 text-xs text-text-secondary">Select the primary focus of your session.</p>
                                             </div>
-                                            <div className="grid gap-3">
+
+                                            <div className="space-y-2">
                                                 {consultationTypes.map((type) => {
                                                     const Icon = type.icon;
                                                     const isActive = selectedType === type.id;
@@ -295,24 +254,42 @@ export default function ConsultationPage() {
                                                             type="button"
                                                             onClick={() => setSelectedType(type.id)}
                                                             className={cn(
-                                                                "flex w-full items-start gap-3 rounded-2xl border p-4 text-left transition-all",
+                                                                "group w-full flex items-start gap-3.5 rounded-xl border-2 p-4 text-left transition-all duration-200 cursor-pointer",
                                                                 isActive
-                                                                    ? "border-primary bg-primary/5 shadow-sm"
-                                                                    : "border-border bg-surface hover:border-primary/25 hover:bg-white"
+                                                                    ? "border-primary bg-primary/5"
+                                                                    : "border-border hover:border-primary/30"
                                                             )}
                                                         >
+                                                            {/* Radio */}
                                                             <div className={cn(
-                                                                "mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
-                                                                isActive ? "bg-primary text-white" : "bg-white text-primary"
+                                                                "mt-0.5 flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full border-2 transition-colors",
+                                                                isActive ? "border-primary bg-primary" : "border-border group-hover:border-primary/40"
+                                                            )}>
+                                                                {isActive && <div className="h-2 w-2 rounded-full bg-white" />}
+                                                            </div>
+
+                                                            {/* Icon */}
+                                                            <div className={cn(
+                                                                "mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors",
+                                                                isActive ? "bg-primary text-white" : "bg-surface text-text-secondary group-hover:text-primary"
                                                             )}>
                                                                 <Icon size={18} />
                                                             </div>
-                                                            <div>
-                                                                <div className="flex flex-wrap items-center gap-2">
+
+                                                            {/* Content */}
+                                                            <div className="flex-1 min-w-0">
+                                                                <div className="flex items-center justify-between gap-2">
                                                                     <span className="text-sm font-semibold text-text-primary">{type.label}</span>
-                                                                    <span className="rounded-full bg-white px-2 py-0.5 text-[11px] font-medium text-text-muted">{type.duration}</span>
+                                                                    <span className={cn(
+                                                                        "shrink-0 rounded-md px-2 py-0.5 text-[11px] font-semibold",
+                                                                        isActive ? "bg-primary/10 text-primary" : "bg-surface text-text-muted"
+                                                                    )}>
+                                                                        {type.duration}
+                                                                    </span>
                                                                 </div>
-                                                                <p className="mt-1 text-sm leading-6 text-text-secondary">{type.description}</p>
+                                                                <p className="mt-0.5 text-xs text-text-secondary leading-relaxed">
+                                                                    {type.description}
+                                                                </p>
                                                             </div>
                                                         </button>
                                                     );
@@ -321,60 +298,109 @@ export default function ConsultationPage() {
                                         </div>
                                     )}
 
+                                    {/* Step 2: Schedule */}
                                     {currentStep === 2 && (
-                                        <div className="grid gap-4 sm:grid-cols-2">
+                                        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
                                             <div>
-                                                <label className="mb-2 block text-sm font-medium text-text-primary">Preferred day</label>
-                                                <div className="grid grid-cols-2 gap-2">
-                                                    {availableDays.map((day) => (
-                                                        <button
-                                                            key={day}
-                                                            type="button"
-                                                            onClick={() => setSelectedDay(day)}
-                                                            className={cn(
-                                                                "rounded-xl border px-3 py-2.5 text-sm transition-colors",
-                                                                selectedDay === day
-                                                                    ? "border-primary bg-primary text-white"
-                                                                    : "border-border bg-surface text-text-secondary hover:border-primary/25 hover:bg-white"
-                                                            )}
-                                                        >
-                                                            {day}
-                                                        </button>
-                                                    ))}
+                                                <h2 className="text-lg font-bold text-text-primary">When should we meet?</h2>
+                                                <p className="mt-1 text-xs text-text-secondary">All times are in your local timezone.</p>
+                                            </div>
+
+                                            {/* Date selector — calendar strip */}
+                                            <div>
+                                                <p className="mb-3 text-xs font-bold uppercase tracking-wider text-text-muted">Pick a day</p>
+                                                <div className="flex gap-2">
+                                                    {availableDays.map((day) => {
+                                                        const [dayName, dateStr] = day.split(", ");
+                                                        const parts = dateStr.trim().split(" ");
+                                                        const month = parts[0];
+                                                        const num = parts[1];
+                                                        const isActive = selectedDay === day;
+                                                        return (
+                                                            <button
+                                                                key={day}
+                                                                type="button"
+                                                                onClick={() => setSelectedDay(day)}
+                                                                className={cn(
+                                                                    "flex-1 flex flex-col items-center gap-0.5 py-3.5 rounded-xl border-2 transition-all duration-200 cursor-pointer",
+                                                                    isActive
+                                                                        ? "border-primary bg-primary text-white shadow-lg shadow-primary/25"
+                                                                        : "border-border bg-white text-text-secondary hover:border-primary/40"
+                                                                )}
+                                                            >
+                                                                <span className={cn("text-[10px] font-semibold uppercase tracking-wide", isActive ? "text-white/70" : "text-text-muted")}>{dayName}</span>
+                                                                <span className={cn("text-xl font-black", isActive ? "text-white" : "text-text-primary")}>{num}</span>
+                                                                <span className={cn("text-[10px] font-medium", isActive ? "text-white/70" : "text-text-muted")}>{month}</span>
+                                                            </button>
+                                                        );
+                                                    })}
                                                 </div>
                                             </div>
+
+                                            {/* Time selector — grouped by period */}
                                             <div>
-                                                <label className="mb-2 block text-sm font-medium text-text-primary">Preferred time</label>
-                                                <div className="grid grid-cols-2 gap-2">
-                                                    {timeSlots.map((slot) => (
-                                                        <button
-                                                            key={slot}
-                                                            type="button"
-                                                            onClick={() => setSelectedTime(slot)}
-                                                            className={cn(
-                                                                "rounded-xl border px-3 py-2.5 text-sm transition-colors",
-                                                                selectedTime === slot
-                                                                    ? "border-accent bg-accent text-white"
-                                                                    : "border-border bg-surface text-text-secondary hover:border-accent/25 hover:bg-white"
-                                                            )}
-                                                        >
-                                                            {slot}
-                                                        </button>
-                                                    ))}
+                                                <p className="mb-3 text-xs font-bold uppercase tracking-wider text-text-muted">Pick a time</p>
+                                                <div className="space-y-4">
+                                                    <div>
+                                                        <p className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold text-text-muted">
+                                                            <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+                                                            Morning
+                                                        </p>
+                                                        <div className="flex flex-wrap gap-2">
+                                                            {timeSlots.filter(s => s.includes("AM")).map((slot) => (
+                                                                <button
+                                                                    key={slot}
+                                                                    type="button"
+                                                                    onClick={() => setSelectedTime(slot)}
+                                                                    className={cn(
+                                                                        "rounded-lg border-2 px-5 py-2.5 text-sm font-semibold transition-all duration-200 cursor-pointer",
+                                                                        selectedTime === slot
+                                                                            ? "border-primary bg-primary/10 text-primary"
+                                                                            : "border-border text-text-secondary hover:border-primary/30"
+                                                                    )}
+                                                                >
+                                                                    {slot}
+                                                                </button>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <p className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold text-text-muted">
+                                                            <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
+                                                            Afternoon
+                                                        </p>
+                                                        <div className="flex flex-wrap gap-2">
+                                                            {timeSlots.filter(s => s.includes("PM")).map((slot) => (
+                                                                <button
+                                                                    key={slot}
+                                                                    type="button"
+                                                                    onClick={() => setSelectedTime(slot)}
+                                                                    className={cn(
+                                                                        "rounded-lg border-2 px-5 py-2.5 text-sm font-semibold transition-all duration-200 cursor-pointer",
+                                                                        selectedTime === slot
+                                                                            ? "border-primary bg-primary/10 text-primary"
+                                                                            : "border-border text-text-secondary hover:border-primary/30"
+                                                                    )}
+                                                                >
+                                                                    {slot}
+                                                                </button>
+                                                            ))}
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     )}
 
+                                    {/* Step 3: Pricing */}
                                     {currentStep === 3 && (
-                                        <div className="space-y-3">
+                                        <div className="space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-500">
                                             <div>
-                                                <label className="block text-sm font-medium text-text-primary">Pricing model</label>
-                                                <p className="mt-1 text-sm text-text-secondary">
-                                                    Choose the level of support and speed that fits your current stage.
-                                                </p>
+                                                <h2 className="text-lg font-bold text-text-primary">Choose your package</h2>
+                                                <p className="mt-1 text-xs text-text-secondary">All plans include a confirmation email and session notes.</p>
                                             </div>
-                                            <div className="grid gap-3">
+
+                                            <div className="space-y-3">
                                                 {pricingPlans.map((plan) => {
                                                     const isActive = selectedPlan === plan.id;
                                                     return (
@@ -383,36 +409,46 @@ export default function ConsultationPage() {
                                                             type="button"
                                                             onClick={() => setSelectedPlan(plan.id)}
                                                             className={cn(
-                                                                "rounded-2xl border p-4 text-left transition-all",
+                                                                "relative w-full flex items-center gap-4 rounded-xl border-2 p-4 text-left transition-all duration-200 cursor-pointer group",
                                                                 isActive
-                                                                    ? "border-accent bg-accent/5 shadow-sm"
-                                                                    : "border-border bg-surface hover:border-accent/25 hover:bg-white",
-                                                                plan.highlight && !isActive && "border-primary/20"
+                                                                    ? "border-primary bg-primary/5 shadow-md"
+                                                                    : "border-border bg-white hover:border-primary/30",
+                                                                plan.highlight && !isActive && "border-accent/40"
                                                             )}
                                                         >
-                                                            <div className="flex items-start justify-between gap-3">
-                                                                <div>
-                                                                    <p className="text-sm font-semibold text-text-primary">{plan.name}</p>
-                                                                    <p className="mt-1 text-sm text-text-secondary">{plan.note}</p>
-                                                                </div>
-                                                                <div className="text-right">
-                                                                    <p className="text-base font-bold text-primary">{plan.price}</p>
+                                                            {/* Radio indicator */}
+                                                            <div className={cn(
+                                                                "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
+                                                                isActive ? "border-primary bg-primary" : "border-border group-hover:border-primary/40"
+                                                            )}>
+                                                                {isActive && <div className="h-2 w-2 rounded-full bg-white" />}
+                                                            </div>
+
+                                                            {/* Plan info */}
+                                                            <div className="flex-1 min-w-0">
+                                                                <div className="flex items-center gap-2">
+                                                                    <h3 className="text-sm font-bold text-text-primary">{plan.name}</h3>
                                                                     {plan.highlight && (
-                                                                        <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
-                                                                            Popular
-                                                                        </span>
+                                                                        <span className="rounded-full bg-accent/10 px-2 py-0.5 text-[10px] font-bold text-accent">Popular</span>
                                                                     )}
                                                                 </div>
+                                                                <p className="mt-0.5 text-xs text-text-secondary">{plan.note}</p>
+                                                                <div className="mt-2 flex flex-wrap gap-1.5">
+                                                                    {plan.features.map((f) => (
+                                                                        <span key={f} className="inline-flex items-center gap-1 rounded-md bg-surface px-2 py-0.5 text-[10px] font-medium text-text-secondary border border-border/50">
+                                                                            <CheckmarkCircle01Icon size={10} className="text-accent" />
+                                                                            {f}
+                                                                        </span>
+                                                                    ))}
+                                                                </div>
                                                             </div>
-                                                            <div className="mt-3 flex flex-wrap gap-2">
-                                                                {plan.features.map((feature) => (
-                                                                    <span
-                                                                        key={feature}
-                                                                        className="rounded-full bg-white px-2.5 py-1 text-[11px] font-medium text-text-muted"
-                                                                    >
-                                                                        {feature}
-                                                                    </span>
-                                                                ))}
+
+                                                            {/* Price */}
+                                                            <div className="shrink-0 text-right">
+                                                                <span className={cn("text-xl font-black", isActive ? "text-primary" : "text-text-primary")}>
+                                                                    {plan.price.split(" ")[1]}
+                                                                </span>
+                                                                <span className="block text-[10px] font-medium text-text-muted">{plan.price.split(" ")[0]}</span>
                                                             </div>
                                                         </button>
                                                     );
@@ -421,13 +457,19 @@ export default function ConsultationPage() {
                                         </div>
                                     )}
 
+                                    {/* Step 4: Contact details */}
                                     {currentStep === 4 && (
-                                        <div className="space-y-4">
-                                            <div className="grid gap-4 sm:grid-cols-2">
+                                        <div className="space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                            <div>
+                                                <h2 className="text-lg font-bold text-text-primary">Final details</h2>
+                                                <p className="mt-1 text-xs text-text-secondary">Tell us a bit about yourself to finalize the booking.</p>
+                                            </div>
+
+                                            <div className="grid gap-4 sm:grid-cols-2 bg-surface p-5 rounded-2xl border border-border">
                                                 <Input
                                                     label="Full name"
                                                     value={fullName}
-                                                    onChange={(event) => setFullName(event.target.value)}
+                                                    onChange={(e) => setFullName(e.target.value)}
                                                     placeholder="Ernest Owusu Darko"
                                                     required
                                                 />
@@ -435,118 +477,193 @@ export default function ConsultationPage() {
                                                     label="Email address"
                                                     type="email"
                                                     value={email}
-                                                    onChange={(event) => setEmail(event.target.value)}
+                                                    onChange={(e) => setEmail(e.target.value)}
                                                     placeholder="you@example.com"
                                                     required
                                                 />
-                                            </div>
-                                            <Input
-                                                label="Phone number"
-                                                type="tel"
-                                                value={phone}
-                                                onChange={(event) => setPhone(event.target.value)}
-                                                placeholder="0240 067 412"
-                                                required
-                                            />
-
-                                            <div>
-                                                <label htmlFor="consultation-notes" className="mb-1.5 block text-sm font-medium text-text-primary">
-                                                    What would you like help with?
-                                                </label>
-                                                <textarea
-                                                    id="consultation-notes"
-                                                    rows={4}
-                                                    value={notes}
-                                                    onChange={(event) => setNotes(event.target.value)}
-                                                    placeholder="Briefly describe your current stage, target country, and what you want covered during the consultation."
-                                                    className="w-full rounded-lg border border-border bg-white px-4 py-3 text-sm text-text-primary placeholder:text-text-muted transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                                                />
+                                                <div className="sm:col-span-2">
+                                                    <Input
+                                                        label="Phone number"
+                                                        type="tel"
+                                                        value={phone}
+                                                        onChange={(e) => setPhone(e.target.value)}
+                                                        placeholder="0240 067 412"
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="sm:col-span-2">
+                                                    <label htmlFor="consultation-notes" className="mb-1 block text-sm font-bold text-text-primary">
+                                                        Additional notes (Optional)
+                                                    </label>
+                                                    <textarea
+                                                        id="consultation-notes"
+                                                        rows={3}
+                                                        value={notes}
+                                                        onChange={(e) => setNotes(e.target.value)}
+                                                        placeholder="Share your current stage, target country, or specific questions..."
+                                                        className="w-full rounded-xl border border-border bg-white p-3 text-sm text-text-primary placeholder:text-text-muted transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none"
+                                                    />
+                                                </div>
                                             </div>
                                         </div>
                                     )}
 
-                                    <div className="flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
-                                        <Button
+                                    {/* Navigation */}
+                                    <div className="mt-6 flex items-center justify-between border-t border-border pt-4">
+                                        <button
                                             type="button"
-                                            variant="outline"
-                                            size="lg"
                                             onClick={goToPreviousStep}
                                             disabled={currentStep === 1}
+                                            className="inline-flex h-10 items-center gap-1.5 rounded-lg px-4 text-sm font-bold text-text-secondary transition-all hover:bg-surface disabled:opacity-0 disabled:pointer-events-none cursor-pointer"
                                         >
-                                            <ArrowLeft01Icon size={18} />
+                                            <ArrowLeft01Icon size={16} />
                                             Back
-                                        </Button>
+                                        </button>
 
                                         {currentStep < 4 ? (
-                                            <Button
+                                            <button
                                                 type="button"
-                                                variant="accent"
-                                                size="lg"
                                                 onClick={goToNextStep}
                                                 disabled={!canAdvance(currentStep)}
+                                                className="inline-flex h-10 items-center gap-1.5 rounded-lg bg-primary px-6 text-sm font-bold text-white shadow-md shadow-primary/20 transition-all hover:bg-primary-dark hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 cursor-pointer"
                                             >
-                                                Next Step
-                                                <ArrowRight01Icon size={18} />
-                                            </Button>
+                                                Continue
+                                                <ArrowRight01Icon size={16} />
+                                            </button>
                                         ) : (
-                                            <Button type="submit" variant="accent" size="lg">
-                                                <Calendar01Icon size={18} />
+                                            <button
+                                                type="submit"
+                                                disabled={!canAdvance(4)}
+                                                className="inline-flex h-10 items-center gap-1.5 rounded-lg bg-accent px-6 text-sm font-bold text-white shadow-md shadow-accent/20 transition-all hover:bg-accent-dark hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 cursor-pointer"
+                                            >
+                                                <CheckmarkCircle01Icon size={16} />
                                                 Confirm Booking
-                                            </Button>
+                                            </button>
                                         )}
                                     </div>
                                 </form>
-                            ) : (
-                                <div className="space-y-5 py-6">
-                                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent-light text-accent">
-                                        <CheckmarkCircle01Icon size={28} />
-                                    </div>
-                                    <div>
-                                        <h2 className="text-2xl font-semibold text-text-primary">Consultation booked</h2>
-                                        <p className="mt-2 text-sm leading-6 text-text-secondary">
-                                            Your dummy booking has been recorded for <span className="font-semibold text-text-primary">{selectedDay}</span> at <span className="font-semibold text-text-primary">{selectedTime}</span>.
-                                            We&apos;ve reserved a <span className="font-semibold text-text-primary">{activeType.label}</span> under the <span className="font-semibold text-text-primary">{activePlan.name}</span> plan.
-                                        </p>
+                            </div>
+
+                            {/* Sidebar summary */}
+                            <aside className="lg:col-span-4 space-y-4 lg:sticky lg:top-24">
+                                <div className="rounded-xl border border-border bg-white overflow-hidden">
+                                    <div className="border-b border-border px-4 py-3">
+                                        <h3 className="text-[13px] font-semibold text-text-primary">Booking summary</h3>
                                     </div>
 
-                                    <div className="rounded-2xl border border-border bg-surface p-4">
-                                        <div className="flex items-start gap-3">
-                                            <AiUserIcon size={18} className="mt-0.5 text-primary" />
-                                            <div className="space-y-1 text-sm text-text-secondary">
-                                                <p><span className="font-semibold text-text-primary">Name:</span> {fullName}</p>
-                                                <p><span className="font-semibold text-text-primary">Email:</span> {email}</p>
-                                                <p><span className="font-semibold text-text-primary">Phone:</span> {phone}</p>
+                                    <div className="divide-y divide-border">
+                                        <div className="flex items-center justify-between px-4 py-3">
+                                            <div>
+                                                <p className="text-[11px] text-text-muted">Session</p>
+                                                <p className="text-sm font-medium text-text-primary">{activeType.label}</p>
                                             </div>
+                                            <span className="rounded-md bg-primary/8 px-2 py-0.5 text-[11px] font-semibold text-primary">{activeType.duration}</span>
+                                        </div>
+
+                                        <div className="px-4 py-3">
+                                            <p className="text-[11px] text-text-muted">Date & time</p>
+                                            <p className="text-sm font-medium text-text-primary">{selectedDay}, {selectedTime}</p>
+                                        </div>
+
+                                        <div className="flex items-center justify-between px-4 py-3">
+                                            <div>
+                                                <p className="text-[11px] text-text-muted">Package</p>
+                                                <p className="text-sm font-medium text-text-primary">{activePlan.name}</p>
+                                            </div>
+                                            <span className="text-sm font-semibold text-text-primary">{activePlan.price}</span>
                                         </div>
                                     </div>
 
-                                    <div className="grid gap-3 sm:grid-cols-2">
-                                        <div className="rounded-2xl border border-border bg-white p-4">
-                                            <p className="text-xs font-semibold uppercase tracking-wide text-text-muted">Consultation</p>
-                                            <p className="mt-2 text-sm font-semibold text-text-primary">{activeType.label}</p>
-                                            <p className="mt-1 text-sm text-text-secondary">{activeType.duration}</p>
+                                    <div className="border-t border-border bg-surface px-4 py-3">
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-xs font-medium text-text-secondary">Total</span>
+                                            <span className="text-base font-semibold text-text-primary">{activePlan.price}</span>
                                         </div>
-                                        <div className="rounded-2xl border border-border bg-white p-4">
-                                            <p className="text-xs font-semibold uppercase tracking-wide text-text-muted">Pricing model</p>
-                                            <p className="mt-2 text-sm font-semibold text-text-primary">{activePlan.name}</p>
-                                            <p className="mt-1 text-sm text-primary">{activePlan.price}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex flex-col gap-3 sm:flex-row">
-                                        <Button variant="accent" size="lg" onClick={resetForm}>
-                                            Book Another Consultation
-                                        </Button>
-                                        <Link href="/dashboard">
-                                            <Button variant="outline" size="lg">
-                                                Return to Dashboard
-                                            </Button>
-                                        </Link>
                                     </div>
                                 </div>
-                            )}
+
+                                <div className="rounded-xl border border-border bg-white px-4 py-4">
+                                    <p className="text-[13px] font-semibold text-text-primary mb-3">What to expect</p>
+                                    <ul className="space-y-2 text-xs text-text-secondary">
+                                        <li className="flex gap-2">
+                                            <CheckmarkCircle01Icon size={14} className="text-accent shrink-0 mt-px" />
+                                            Email confirmation with Google Meet / Zoom link.
+                                        </li>
+                                        <li className="flex gap-2">
+                                            <CheckmarkCircle01Icon size={14} className="text-accent shrink-0 mt-px" />
+                                            Free rescheduling up to 24 hours prior.
+                                        </li>
+                                        <li className="flex gap-2">
+                                            <CheckmarkCircle01Icon size={14} className="text-accent shrink-0 mt-px" />
+                                            Actionable session notes sent afterwards.
+                                        </li>
+                                    </ul>
+                                </div>
+                            </aside>
                         </div>
-                    </div>
+                    ) : (
+                        /* Confirmation Screen */
+                        <div className="mx-auto max-w-2xl text-center mt-6 animate-in zoom-in-95 duration-500">
+                            <div className="relative mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-accent/10">
+                                <div className="absolute inset-0 animate-ping rounded-full bg-accent/20" />
+                                <CheckmarkCircle01Icon size={32} className="text-accent" />
+                            </div>
+
+                            <h2 className="text-2xl font-black text-text-primary md:text-3xl">
+                                Booking Confirmed!
+                            </h2>
+                            <p className="mt-3 text-sm text-text-secondary">
+                                Awesome, <span className="font-bold text-text-primary">{fullName.split(' ')[0]}</span>. Your <span className="font-bold text-primary">{activeType.label}</span> session is securely booked.
+                            </p>
+
+                            <div className="mx-auto mt-8 max-w-md rounded-xl border border-border bg-white p-6 text-left">
+                                <h3 className="text-xs font-bold uppercase tracking-wider text-text-muted mb-5">Booking Details</h3>
+
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                                            <Calendar01Icon size={18} />
+                                        </div>
+                                        <div>
+                                            <p className="text-[11px] font-semibold text-text-muted">Date & Time</p>
+                                            <p className="text-sm font-bold text-text-primary">{selectedDay} <span className="text-text-muted mx-1">•</span> {selectedTime}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent">
+                                            <CreditCardIcon size={18} />
+                                        </div>
+                                        <div>
+                                            <p className="text-[11px] font-semibold text-text-muted">Package Total</p>
+                                            <p className="text-sm font-bold text-text-primary">{activePlan.name} <span className="text-text-muted mx-1">•</span> <span className="text-accent">{activePlan.price}</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="mt-6 rounded-xl bg-surface p-3 text-center">
+                                    <p className="text-xs text-text-secondary">
+                                        We&apos;ve sent a calendar invitation to <strong className="text-text-primary">{email}</strong>.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                                <Link
+                                    href="/dashboard"
+                                    className="inline-flex h-10 w-full sm:w-auto items-center justify-center rounded-lg bg-primary px-6 text-sm font-bold text-white shadow-md shadow-primary/20 transition-all hover:bg-primary-dark hover:scale-105"
+                                >
+                                    Go to Dashboard
+                                </Link>
+                                <button
+                                    onClick={resetForm}
+                                    className="inline-flex h-10 w-full sm:w-auto items-center justify-center rounded-lg border-2 border-border bg-white px-6 text-sm font-bold text-text-secondary transition-all hover:border-primary/30 hover:text-primary"
+                                >
+                                    Book Another
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </section>
             </main>
             <Footer />
