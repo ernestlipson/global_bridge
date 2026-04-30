@@ -6,6 +6,7 @@ import {
     NoteIcon,
 } from "hugeicons-react";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 const documents = [
     { name: "CV - Ernest Darko.pdf", type: "CV", status: "Approved" as const, updated: "2 hours ago", pages: 2 },
@@ -29,7 +30,11 @@ export default function DocumentsPage() {
             <div className="mb-6">
                 <h1 className="text-xl font-semibold text-text-primary">Documents</h1>
                 <p className="mt-1 max-w-xl text-sm text-text-secondary">
-                    Track review status and keep application files ready for submission.
+                    Track review status and keep application files ready for submission. Need a fresh SOP or CV?{" "}
+                    <Link href="/documents/sop-cv-builder" className="font-semibold text-primary hover:underline">
+                        Open AI SOP &amp; CV Builder
+                    </Link>
+                    .
                 </p>
             </div>
 

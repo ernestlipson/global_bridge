@@ -1,12 +1,13 @@
 "use client";
 
-import { consultationHref } from "@/lib/contact";
+import { AppLogo } from "@/components/brand/AppLogo";
 import { cn } from "@/lib/utils";
+import { isDashboardNavActive } from "@/lib/dashboard-nav-active";
 import {
     Menu01Icon,
     ChatNotification01Icon,
     AiSearchIcon,
-    Calendar01Icon,
+    DollarCircleIcon,
     GraduationScrollIcon,
     DashboardCircleIcon,
     CameraMicrophone01Icon,
@@ -14,22 +15,28 @@ import {
     DocumentAttachmentIcon,
     CheckListIcon,
     ClipboardIcon,
+    FileEditIcon,
     Airplane01Icon,
     UserSearch01Icon,
     AiUserIcon,
     ArrowLeft01Icon,
+    Home01Icon,
     Logout01Icon,
 } from "hugeicons-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
+
 const mobileNavItems = [
     { label: "Dashboard", href: "/dashboard", icon: DashboardCircleIcon },
     { label: "Visa Interview", href: "/visa", icon: CameraMicrophone01Icon },
-    { label: "Universities", href: "/universities", icon: GraduationScrollIcon },
+    { label: "University Matcher", href: "/university-matcher", icon: GraduationScrollIcon },
     { label: "Scholarships", href: "/scholarships", icon: Wallet01Icon },
+    { label: "Consultation", href: "/consultation", icon: DollarCircleIcon },
+    { label: "Pricing", href: "/pricing", icon: DollarCircleIcon },
     { label: "Documents", href: "/documents", icon: DocumentAttachmentIcon },
+    { label: "SOP & CV Builder", href: "/documents/sop-cv-builder", icon: FileEditIcon },
     { label: "Transcript", href: "/transcript", icon: CheckListIcon },
     { label: "Applications", href: "/applications", icon: ClipboardIcon },
     { label: "Pre-departure", href: "/predeparture", icon: Airplane01Icon },
@@ -37,23 +44,25 @@ const mobileNavItems = [
     { label: "Profile", href: "/profile", icon: AiUserIcon },
 ];
 
+const appbarMenuItems = [
+    { label: "Pricing", href: "/pricing", icon: DollarCircleIcon },
+] as const;
+
 export function DashboardHeader() {
     const pathname = usePathname();
     const [mobileOpen, setMobileOpen] = useState(false);
-
-    // Derive page title from pathname
-    const pageTitle =
-        mobileNavItems.find(
-            (item) =>
-                pathname === item.href ||
-                (item.href !== "/dashboard" && pathname.startsWith(item.href))
-        )?.label || "Dashboard";
+    const pageTitle = (() => {
+        const item = [...mobileNavItems].find((nav) =>
+            isDashboardNavActive(pathname, nav.href)
+        );
+        return item?.label ?? "Dashboard";
+    })();
 
     return (
         <>
-            <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-border bg-white/80 backdrop-blur-lg px-4 sm:px-6">
-                {/* Left: mobile menu + title */}
-                <div className="flex items-center gap-3">
+            <header className="sticky top-0 z-40 flex h-16 items-center border-b border-border bg-white/80 backdrop-blur-lg px-4 sm:px-6">
+                {/* Left: mobile menu + title + appbar menus */}
+                <div className="flex items-center gap-3 flex-1">
                     <button
                         onClick={() => setMobileOpen(true)}
                         className="flex h-9 w-9 items-center justify-center rounded-lg text-text-secondary hover:bg-surface lg:hidden"
@@ -61,20 +70,42 @@ export function DashboardHeader() {
                     >
                         <Menu01Icon size={20} />
                     </button>
-                    <h1 className="text-lg font-semibold text-text-primary">
+                    <Link
+                        href="/"
+                        aria-label="Back home"
+                        title="Back home"
+                        className="inline-flex shrink-0 items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium text-text-secondary transition-colors hover:bg-surface hover:text-text-primary lg:hidden"
+                    >
+                        <Home01Icon size={17} className="text-text-muted" aria-hidden />
+                        <span className="hidden sm:inline">Back home</span>
+                    </Link>
+                    <h1 className="min-w-0 truncate text-lg font-semibold text-text-primary mr-2">
                         {pageTitle}
                     </h1>
+                    <nav className="hidden items-center gap-1 border-r border-border pr-3 lg:flex" aria-label="Header menu">
+                        {appbarMenuItems.map((item) => {
+                            const isActive = pathname === item.href;
+                            return (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    className={cn(
+                                        "inline-flex h-9 items-center gap-2 rounded-lg px-3 text-sm font-medium transition-colors",
+                                        isActive
+                                            ? "bg-primary-50 text-primary"
+                                            : "text-text-secondary hover:bg-surface hover:text-text-primary"
+                                    )}
+                                >
+                                    <item.icon size={16} />
+                                    {item.label}
+                                </Link>
+                            );
+                        })}
+                    </nav>
                 </div>
 
-                {/* Right: search + notifications + avatar */}
+                {/* Right: actions */}
                 <div className="flex items-center gap-2">
-                    <Link
-                        href={consultationHref}
-                        className="hidden h-9 items-center gap-2 rounded-lg bg-primary px-3.5 text-sm font-medium text-white shadow-sm transition-all hover:bg-primary-dark hover:shadow md:inline-flex"
-                    >
-                        <Calendar01Icon size={16} />
-                        Book Consultation
-                    </Link>
                     <button className="flex h-9 w-9 items-center justify-center rounded-lg text-text-muted hover:bg-surface hover:text-text-secondary transition-colors">
                         <AiSearchIcon size={18} />
                     </button>
@@ -107,15 +138,10 @@ export function DashboardHeader() {
                         <div className="flex h-16 items-center justify-between border-b border-border px-4">
                             <Link
                                 href="/dashboard"
-                                className="flex items-center gap-2"
+                                className="flex min-w-0 items-center gap-2"
                                 onClick={() => setMobileOpen(false)}
                             >
-                                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                                    <GraduationScrollIcon size={17} className="text-white" />
-                                </div>
-                                <span className="text-sm font-bold text-text-primary tracking-tight">
-                                    GlobalBridge
-                                </span>
+                                <AppLogo heightClass="h-9" maxWidthClass="max-w-[180px]" />
                             </Link>
                             <button
                                 onClick={() => setMobileOpen(false)}
@@ -130,10 +156,7 @@ export function DashboardHeader() {
                         <nav className="flex-1 overflow-y-auto px-3 py-4">
                             <ul className="space-y-1">
                                 {mobileNavItems.map((item) => {
-                                    const isActive =
-                                        pathname === item.href ||
-                                        (item.href !== "/dashboard" &&
-                                            pathname.startsWith(item.href));
+                                    const isActive = isDashboardNavActive(pathname, item.href);
 
                                     return (
                                         <li key={item.href}>
@@ -159,12 +182,12 @@ export function DashboardHeader() {
                         {/* Sign out */}
                         <div className="border-t border-border p-3 space-y-2">
                             <Link
-                                href={consultationHref}
+                                href="/"
                                 onClick={() => setMobileOpen(false)}
-                                className="flex items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:bg-primary-dark"
+                                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-text-secondary transition-colors hover:bg-surface hover:text-text-primary"
                             >
-                                <Calendar01Icon size={16} />
-                                Book Consultation
+                                <Home01Icon size={19} />
+                                Back home
                             </Link>
                             <Link
                                 href="/login"

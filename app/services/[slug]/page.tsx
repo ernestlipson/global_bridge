@@ -60,7 +60,7 @@ export default async function ServiceDetailPage({ params }: PageProps) {
                             href="/consultation"
                             className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary to-primary-dark px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/25 transition-all hover:translate-y-[-1px]"
                         >
-                            Book Consultation
+                            Consultation options
                             <ArrowRight01Icon size={16} />
                         </Link>
                         <Link

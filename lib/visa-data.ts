@@ -34,6 +34,92 @@ export const interviewModes: { value: InterviewMode; label: string; questions: n
     { value: "full", label: "Full Simulation", questions: 15, duration: "~35 min" },
 ];
 
+export type LiveInterviewerPersona = "strict" | "supportive" | "neutral";
+
+export const liveInterviewerPersonas: { value: LiveInterviewerPersona; label: string }[] = [
+    { value: "strict", label: "Strict & direct (realistic)" },
+    { value: "supportive", label: "Supportive coach" },
+    { value: "neutral", label: "Neutral embassy style" },
+];
+
+export const liveSessionDurations: { value: string; label: string }[] = [
+    { value: "15", label: "Standard (15 mins)" },
+    { value: "25", label: "Extended (25 mins)" },
+    { value: "35", label: "Deep dive (35 mins)" },
+];
+
+export const liveInterviewFocusAreas: { id: string; label: string }[] = [
+    { id: "academic", label: "Academic intent" },
+    { id: "financial", label: "Financial ability" },
+    { id: "ties", label: "Home ties" },
+];
+
+/** AI mock interview hub: country + visa category (F-1, Tier 4, B1/B2, etc.) */
+export interface VisaInterviewCategory {
+    id: string;
+    country: VisaCountry;
+    /** Card heading, e.g. "USA F-1 Student Visa" */
+    cardTitle: string;
+    /** Short label for tables and chips */
+    tableLabel: string;
+    description: string;
+    durationLine: string;
+    detailLine: string;
+    popular?: boolean;
+}
+
+export const visaInterviewCategories: VisaInterviewCategory[] = [
+    {
+        id: "usa-f1",
+        country: "usa",
+        cardTitle: "USA F-1 Student Visa",
+        tableLabel: "USA F-1 Student",
+        description:
+            "Comprehensive interview practice focusing on academic intent, financial ability, and home ties.",
+        durationLine: "15–20 minutes",
+        detailLine: "Personalized feedback report",
+        popular: true,
+    },
+    {
+        id: "uk-tier4",
+        country: "uk",
+        cardTitle: "UK Student (Tier 4)",
+        tableLabel: "UK Tier 4 Student",
+        description:
+            "Credibility interview practice focusing on course choice, institution, and funding.",
+        durationLine: "10–15 minutes",
+        detailLine: "Focus on credibility",
+    },
+    {
+        id: "usa-b2",
+        country: "usa",
+        cardTitle: "USA B1/B2 Tourist",
+        tableLabel: "USA B1/B2 Tourist",
+        description:
+            "Practice demonstrating strong home ties and clear, temporary intent for your visit.",
+        durationLine: "5–10 minutes",
+        detailLine: "Focus on intent and ties",
+    },
+];
+
+export interface PreviousSessionRow {
+    id: string;
+    categoryId: string;
+    dateLabel: string;
+    score: number;
+}
+
+/** Seed rows for the Previous Sessions table (demo data). */
+export const demoPreviousSessions: PreviousSessionRow[] = [
+    { id: "demo-1", categoryId: "usa-f1", dateLabel: "Oct 24, 2023", score: 85 },
+    { id: "demo-2", categoryId: "usa-f1", dateLabel: "Oct 18, 2023", score: 62 },
+    { id: "demo-3", categoryId: "uk-tier4", dateLabel: "Oct 10, 2023", score: 91 },
+];
+
+export function getVisaInterviewCategoryById(id: string): VisaInterviewCategory | undefined {
+    return visaInterviewCategories.find((c) => c.id === id);
+}
+
 export const visaQuestions: VisaQuestion[] = [
     {
         id: 1,
@@ -203,4 +289,26 @@ export function generateDummyFeedback(
         suggestions,
         sampleAnswer,
     };
+}
+
+/** Builds placeholder results for viewing a saved session row at a fixed score. */
+export function buildPreviewSessionResults(overallScore: number): {
+    question: VisaQuestion;
+    answer: string;
+    feedback: InterviewFeedback;
+}[] {
+    const picks = visaQuestions.slice(0, 4);
+    return picks.map((question) => {
+        const fb = generateDummyFeedback(question.id, "Saved session preview.");
+        return {
+            question,
+            answer: "Answer on file for this session.",
+            feedback: {
+                ...fb,
+                overallScore,
+                confidenceScore: overallScore,
+                clarityScore: overallScore,
+            },
+        };
+    });
 }

@@ -1,5 +1,22 @@
-import { GraduationScrollIcon, MailboxIcon, AiPhone01Icon, Location01Icon } from "hugeicons-react";
+import {
+    contactAddress,
+    contactEmail,
+    contactEmailHref,
+    contactPageHref,
+    contactPhoneDisplay,
+    contactPhoneTelHref,
+} from "@/lib/contact";
+import { AppLogo } from "@/components/brand/AppLogo";
+import { MailboxIcon, AiPhone01Icon, Location01Icon } from "hugeicons-react";
 import Link from "next/link";
+
+function footerCompanyHref(href: string) {
+    const h = href.trim();
+    if (h.startsWith("#")) {
+        return `/${h}`;
+    }
+    return h;
+}
 
 const footerLinks = {
     services: [
@@ -11,10 +28,11 @@ const footerLinks = {
     ],
     company: [
         { label: "About Us", href: "#" },
+        { label: "Meet the team", href: "/team" },
         { label: "How It Works", href: "#how-it-works" },
         { label: "Testimonials", href: "#testimonials" },
         { label: "Pricing", href: "#" },
-        { label: "Contact", href: "#contact" },
+        { label: "Contact", href: contactPageHref },
     ],
     destinations: [
         { label: "United Kingdom", href: "#" },
@@ -23,27 +41,18 @@ const footerLinks = {
         { label: "Australia", href: "#" },
         { label: "Europe", href: "#" },
     ],
+    blog: [{ label: "All articles", href: "/blogs" }],
 };
 
 export function Footer() {
     return (
-        <footer className="border-t border-border bg-[#0A1628] text-white">
+        <footer className="relative z-10 border-t border-border bg-[#0A1628] text-white">
             <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-                <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-5">
+                <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-6">
                     {/* Brand column */}
                     <div className="lg:col-span-2">
-                        <Link href="/" className="flex items-center gap-2.5">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10">
-                                <GraduationScrollIcon size={20} className="text-white" />
-                            </div>
-                            <div className="leading-tight">
-                                <span className="text-base font-bold tracking-tight">
-                                    GlobalBridge
-                                </span>
-                                <span className="block text-[10px] font-medium text-white/50 -mt-0.5">
-                                    Edu Consult
-                                </span>
-                            </div>
+                        <Link href="/" className="inline-block">
+                            <AppLogo variant="onDark" heightClass="h-12 sm:h-14" maxWidthClass="max-w-[min(340px,90vw)]" />
                         </Link>
                         <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/60">
                             Bridging Education Beyond Borders. Your trusted pathway to global
@@ -53,22 +62,22 @@ export function Footer() {
                         {/* Contact info */}
                         <div className="mt-6 space-y-3">
                             <a
-                                href="tel:+233240067412"
+                                href={contactPhoneTelHref}
                                 className="flex items-center gap-2.5 text-sm text-white/60 transition-colors hover:text-white"
                             >
                                 <AiPhone01Icon size={15} />
-                                0240067412
+                                {contactPhoneDisplay}
                             </a>
                             <a
-                                href="mailto:darkoernest507@gmail.com"
+                                href={contactEmailHref}
                                 className="flex items-center gap-2.5 text-sm text-white/60 transition-colors hover:text-white"
                             >
                                 <MailboxIcon size={15} />
-                                darkoernest507@gmail.com
+                                {contactEmail}
                             </a>
                             <p className="flex items-center gap-2.5 text-sm text-white/60">
                                 <Location01Icon size={15} />
-                                Accra, Ghana
+                                {contactAddress}
                             </p>
                         </div>
                     </div>
@@ -100,8 +109,9 @@ export function Footer() {
                         <ul className="mt-4 space-y-2.5">
                             {footerLinks.company.map((link) => (
                                 <li key={link.label}>
+                                    {/* Native <a> so internal routes always resolve (works from any marketing page). */}
                                     <a
-                                        href={link.href}
+                                        href={footerCompanyHref(link.href)}
                                         className="text-sm text-white/50 transition-colors hover:text-white"
                                     >
                                         {link.label}
@@ -125,6 +135,25 @@ export function Footer() {
                                     >
                                         {link.label}
                                     </a>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    {/* Blog */}
+                    <div>
+                        <h3 className="text-sm font-semibold uppercase tracking-wider text-white/80">
+                            Blog
+                        </h3>
+                        <ul className="mt-4 space-y-2.5">
+                            {footerLinks.blog.map((link) => (
+                                <li key={link.label}>
+                                    <Link
+                                        href={link.href}
+                                        className="text-sm text-white/50 transition-colors hover:text-white"
+                                    >
+                                        {link.label}
+                                    </Link>
                                 </li>
                             ))}
                         </ul>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import {
@@ -36,6 +36,7 @@ const budgetOptions = [
 ] as const;
 const studyModeOptions = ["Coursework", "Research", "Flexible"] as const;
 const documentLabels = ["CV / Resume", "Transcript", "Statement of Purpose", "Recommendation"] as const;
+const suggestedPrograms = ["Data Science", "Public Health", "Finance", "Software Engineering", "Business Analytics"] as const;
 
 const steps = [
     { id: 0, label: "Study target", icon: SearchVisualIcon },
@@ -53,12 +54,14 @@ function TextField({
     value,
     onChange,
     placeholder,
+    hint,
     type = "text",
 }: {
     label: string;
     value: string;
     onChange: (value: string) => void;
     placeholder: string;
+    hint?: string;
     type?: string;
 }) {
     return (
@@ -69,8 +72,9 @@ function TextField({
                 value={value}
                 onChange={(event) => onChange(event.target.value)}
                 placeholder={placeholder}
-                className="h-10 w-full rounded-lg border border-border bg-white px-3 text-sm text-text-primary placeholder:text-text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/12"
+                className="h-9 w-full rounded-lg border border-border bg-white px-3 text-sm text-text-primary placeholder:text-text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/12"
             />
+            {hint && <p className="mt-1 text-xs leading-relaxed text-text-muted">{hint}</p>}
         </div>
     );
 }
@@ -92,7 +96,7 @@ function SelectField({
             <select
                 value={value}
                 onChange={(event) => onChange(event.target.value)}
-                className="h-10 w-full rounded-lg border border-border bg-white px-3 text-sm text-text-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/12"
+                className="h-9 w-full rounded-lg border border-border bg-white px-3 text-sm text-text-primary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/12"
             >
                 {options.map((option) => (
                     <option key={option} value={option}>
@@ -125,9 +129,9 @@ function OptionPills({
                         type="button"
                         onClick={() => onChange(option)}
                         className={cn(
-                            "rounded-lg border px-3.5 py-1.5 text-[13px] font-medium transition-colors",
+                            "rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors",
                             value === option
-                                ? "border-primary bg-primary/8 text-primary"
+                                ? "border-primary bg-primary-50 text-primary"
                                 : "border-border bg-white text-text-secondary hover:border-primary/30 hover:text-primary"
                         )}
                     >
@@ -139,7 +143,28 @@ function OptionPills({
     );
 }
 
-function ReadinessMeter({
+function getReadinessScore(profile: UserProfile, hasProgram: boolean, hasDocuments: boolean) {
+    let score = 36;
+    if (profile.destination !== "All Countries") score += 12;
+    if (hasProgram) score += 16;
+    if (profile.gpa) score += 12;
+    if (profile.testType !== "None") score += 10;
+    if (profile.budget) score += 8;
+    if (profile.goals) score += 10;
+    if (hasDocuments) score += 12;
+    return Math.min(100, score);
+}
+
+function getStepStatuses(profile: UserProfile, hasProgram: boolean, hasDocuments: boolean) {
+    return [
+        { done: hasProgram && !!profile.destination && !!profile.level, missing: hasProgram ? "" : "Add a programme" },
+        { done: !!profile.gpa || profile.testType !== "None" || !!profile.englishScore, missing: "Add GPA or scores" },
+        { done: !!profile.budget || !!profile.goals, missing: "Set budget or goals" },
+        { done: hasDocuments, missing: "Upload optional documents" },
+    ];
+}
+
+function MatcherBrief({
     profile,
     hasProgram,
     hasDocuments,
@@ -148,29 +173,25 @@ function ReadinessMeter({
     hasProgram: boolean;
     hasDocuments: boolean;
 }) {
-    const readiness = useMemo(() => {
-        let score = 36;
-        if (profile.destination !== "All Countries") score += 12;
-        if (hasProgram) score += 16;
-        if (profile.gpa) score += 12;
-        if (profile.testType !== "None") score += 10;
-        if (profile.budget) score += 8;
-        if (profile.goals) score += 10;
-        if (hasDocuments) score += 12;
-        return Math.min(100, score);
-    }, [hasDocuments, hasProgram, profile]);
+    const readiness = getReadinessScore(profile, hasProgram, hasDocuments);
 
-    const checks = [
+    const briefRows = [
+        { label: "Destination", value: profile.destination },
+        { label: "Level", value: profile.level },
+        { label: "Programme", value: profile.program || "Not set" },
+        { label: "Budget", value: profile.budget || "Not set" },
+    ];
+    const missingItems = [
         { done: hasProgram, label: "Programme specified" },
         { done: !!profile.gpa, label: "GPA provided" },
         { done: !!profile.budget, label: "Budget set" },
         { done: hasDocuments, label: "Documents uploaded" },
-    ];
+    ].filter((item) => !item.done);
 
     return (
         <div className="rounded-xl border border-border bg-white p-5">
             <div className="flex items-center justify-between">
-                <p className="text-[13px] font-semibold text-text-primary">Profile readiness</p>
+                <p className="text-[13px] font-semibold text-text-primary">Matcher brief</p>
                 <span className="text-sm font-semibold text-primary">{readiness}%</span>
             </div>
             <div className="mt-3 h-1.5 rounded-full bg-surface">
@@ -179,9 +200,37 @@ function ReadinessMeter({
                     style={{ width: `${readiness}%` }}
                 />
             </div>
+            <div className="mt-4 space-y-2.5">
+                {briefRows.map((row) => (
+                    <div key={row.label} className="flex items-start justify-between gap-3 text-xs">
+                        <span className="text-text-muted">{row.label}</span>
+                        <span className="max-w-[150px] text-right font-medium text-text-primary">{row.value}</span>
+                    </div>
+                ))}
+            </div>
+            <div className="mt-4 rounded-lg bg-surface p-3">
+                <p className="text-xs font-medium text-text-primary">Missing signals</p>
+                <div className="mt-2 space-y-1.5">
+                    {missingItems.length > 0 ? missingItems.map((item) => (
+                        <div key={item.label} className="flex items-center gap-2 text-xs text-text-muted">
+                            <CheckmarkCircle01Icon size={14} className="text-text-muted/40" />
+                            {item.label}
+                        </div>
+                    )) : (
+                        <div className="flex items-center gap-2 text-xs text-text-secondary">
+                            <CheckmarkCircle01Icon size={14} className="text-accent" />
+                            Ready for a stronger shortlist
+                        </div>
+                    )}
+                </div>
+            </div>
             <div className="mt-4 space-y-2">
-                {checks.map((item) => (
-                    <div key={item.label} className="flex items-center gap-2 text-[13px]">
+                {[
+                    { done: hasProgram, label: "Programme" },
+                    { done: !!profile.budget, label: "Budget" },
+                    { done: hasDocuments, label: "Documents" },
+                ].map((item) => (
+                    <div key={item.label} className="flex items-center gap-2 text-xs">
                         <CheckmarkCircle01Icon
                             size={15}
                             className={item.done ? "text-accent" : "text-text-muted/50"}
@@ -205,9 +254,9 @@ function ResultCard({
 }) {
     return (
         <article className="rounded-xl border border-border bg-white transition-shadow hover:shadow-md">
-            <div className="flex items-start gap-4 p-5">
+            <div className="flex items-start gap-3 p-4">
                 <div className={cn(
-                    "flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-xl",
+                    "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-lg",
                     university.imageColor
                 )}>
                     {university.crest}
@@ -215,7 +264,10 @@ function ResultCard({
                 <div className="min-w-0 flex-1">
                     <div className="flex items-start justify-between gap-3">
                         <div>
-                            <h3 className="text-[15px] font-semibold text-text-primary">{university.name}</h3>
+                            <div className="flex flex-wrap items-center gap-2">
+                                <span className="rounded-md bg-primary-50 px-2 py-0.5 text-xs font-semibold text-primary">#{rank}</span>
+                                <h3 className="text-[15px] font-semibold text-text-primary">{university.name}</h3>
+                            </div>
                             <p className="mt-0.5 flex items-center gap-1 text-[13px] text-text-secondary">
                                 <Location01Icon size={13} className="text-text-muted" />
                                 {university.city}, {university.country} {university.flag}
@@ -238,7 +290,7 @@ function ResultCard({
                         </div>
                     </div>
 
-                    <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 text-[13px] text-text-secondary">
+                    <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-text-secondary">
                         <span>Rank #{university.ranking}</span>
                         <span>${university.tuitionUSD.toLocaleString()}/yr</span>
                         <span className={university.scholarships ? "text-accent" : ""}>
@@ -248,7 +300,7 @@ function ResultCard({
                 </div>
             </div>
 
-            <div className="border-t border-border px-5 py-4">
+            <div className="border-t border-border px-4 py-3.5">
                 <div className="flex items-start gap-2">
                     <SparklesIcon size={14} className="mt-0.5 shrink-0 text-primary/60" />
                     <p className="text-[13px] leading-relaxed text-text-secondary">{university.aiRationale}</p>
@@ -289,6 +341,10 @@ export default function UniversitiesPage() {
 
     const hasProgram = profile.program.trim().length > 0;
     const hasDocuments = profile.documents.length > 0;
+    const readiness = getReadinessScore(profile, hasProgram, hasDocuments);
+    const stepStatuses = getStepStatuses(profile, hasProgram, hasDocuments);
+    const activeStepMeta = steps[activeStep];
+    const ActiveStepIcon = activeStepMeta.icon;
 
     const handleFiles = (files: FileList | null) => {
         if (!files) return;
@@ -334,6 +390,30 @@ export default function UniversitiesPage() {
     if (view === "results") {
         const highCount = results.filter((r) => r.matchStrength === "High").length;
         const scholarshipCount = results.filter((r) => r.scholarships).length;
+        const bestFit = results.slice(0, 3);
+        const affordableOptions = results
+            .filter((university) => university.tuitionUSD <= 20000 || university.scholarships)
+            .slice(0, 3);
+        const ambitiousPicks = results
+            .filter((university) => university.ranking <= 50 || university.matchStrength === "High")
+            .slice(0, 3);
+        const resultGroups = [
+            {
+                title: "Best fit",
+                body: "Highest overall match across destination, academics, and programme relevance.",
+                items: bestFit,
+            },
+            {
+                title: "Affordable options",
+                body: "Lower tuition or scholarship-friendly choices worth checking early.",
+                items: affordableOptions,
+            },
+            {
+                title: "Ambitious picks",
+                body: "Strong schools that may need sharper documents, scores, or funding strategy.",
+                items: ambitiousPicks,
+            },
+        ].filter((group) => group.items.length > 0);
 
         return (
             <div className="space-y-6 pb-12">
@@ -369,9 +449,23 @@ export default function UniversitiesPage() {
                     ))}
                 </div>
 
-                <div className="space-y-3">
-                    {results.slice(0, 6).map((university, index) => (
-                        <ResultCard key={university.id} university={university} rank={index + 1} />
+                <div className="space-y-5">
+                    {resultGroups.map((group) => (
+                        <section key={group.title} className="rounded-xl border border-border bg-white p-4">
+                            <div className="mb-3 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+                                <div>
+                                    <h2 className="text-[15px] font-semibold text-text-primary">{group.title}</h2>
+                                    <p className="text-xs text-text-secondary">{group.body}</p>
+                                </div>
+                                <span className="text-xs font-medium text-text-muted">{group.items.length} matches</span>
+                            </div>
+                            <div className="space-y-3">
+                                {group.items.map((university) => {
+                                    const rank = results.findIndex((item) => item.id === university.id) + 1;
+                                    return <ResultCard key={`${group.title}-${university.id}`} university={university} rank={rank} />;
+                                })}
+                            </div>
+                        </section>
                     ))}
                 </div>
             </div>
@@ -394,39 +488,60 @@ export default function UniversitiesPage() {
             <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_300px]">
                 {/* Main form area */}
                 <div>
-                    {/* Step navigation */}
-                    <nav className="mb-6 flex gap-1 rounded-xl border border-border bg-white p-1">
-                        {steps.map((s) => {
-                            const StepIcon = s.icon;
-                            return (
-                                <button
-                                    key={s.id}
-                                    type="button"
-                                    onClick={() => setActiveStep(s.id)}
-                                    className={cn(
-                                        "flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-[13px] font-medium transition-colors",
-                                        activeStep === s.id
-                                            ? "bg-primary text-white"
-                                            : "text-text-secondary hover:bg-surface hover:text-text-primary"
-                                    )}
-                                >
-                                    <StepIcon size={15} />
-                                    <span className="hidden sm:inline">{s.label}</span>
-                                </button>
-                            );
-                        })}
-                    </nav>
+                    {/* Progress header */}
+                    <div className="mb-4 rounded-xl border border-border bg-white p-3">
+                        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-white">
+                                    <ActiveStepIcon size={17} />
+                                </div>
+                                <div>
+                                    <p className="text-xs font-medium text-text-muted">
+                                        Step {activeStep + 1} of {steps.length}
+                                    </p>
+                                    <h2 className="text-[15px] font-semibold text-text-primary">{activeStepMeta.label}</h2>
+                                </div>
+                            </div>
+                            <div className="flex min-w-0 flex-1 items-center gap-2 lg:max-w-md">
+                                {steps.map((step) => {
+                                    const status = stepStatuses[step.id];
+                                    return (
+                                        <button
+                                            key={step.id}
+                                            type="button"
+                                            onClick={() => setActiveStep(step.id)}
+                                            className={cn(
+                                                "group h-2 flex-1 rounded-full transition-colors",
+                                                activeStep === step.id
+                                                    ? "bg-primary"
+                                                    : status.done
+                                                        ? "bg-accent"
+                                                        : "bg-slate-200 hover:bg-primary/30"
+                                            )}
+                                            aria-label={`${step.label}: ${status.done ? "complete" : status.missing}`}
+                                        />
+                                    );
+                                })}
+                                <span className="ml-2 shrink-0 rounded-md bg-primary-50 px-2 py-1 text-xs font-semibold text-primary">
+                                    {readiness}%
+                                </span>
+                            </div>
+                        </div>
+                    </div>
 
                     {/* Step content */}
-                    <div className="rounded-xl border border-border bg-white p-5 sm:p-6">
+                    <div className="rounded-xl border border-border bg-white p-5">
                         {/* Step 0: Study target */}
                         {activeStep === 0 && (
                             <div>
                                 <h2 className="text-[15px] font-semibold text-text-primary">Study target</h2>
                                 <p className="mt-1 text-[13px] text-text-secondary">
-                                    Where do you want to study, what degree, and what style of learning?
+                                    Set the main direction first. A specific programme is the strongest matching signal.
                                 </p>
-                                <div className="mt-5 grid gap-4 sm:grid-cols-2">
+                                <div className="mt-4 rounded-lg bg-primary-50 px-3 py-2 text-xs leading-relaxed text-primary">
+                                    Choose All Countries if you want the matcher to trade off cost and fit across destinations.
+                                </div>
+                                <div className="mt-4 grid gap-4 sm:grid-cols-2">
                                     <SelectField
                                         label="Destination country"
                                         value={profile.destination}
@@ -444,6 +559,7 @@ export default function UniversitiesPage() {
                                         value={profile.program}
                                         onChange={(v) => setProfile((c) => ({ ...c, program: v }))}
                                         placeholder="Computer Science, Public Health, Finance..."
+                                        hint="Use a real programme family, not a broad phrase like tech or business."
                                     />
                                     <OptionPills
                                         label="Study style"
@@ -451,6 +567,21 @@ export default function UniversitiesPage() {
                                         value={profile.studyMode}
                                         onChange={(v) => setProfile((c) => ({ ...c, studyMode: v }))}
                                     />
+                                </div>
+                                <div className="mt-4">
+                                    <p className="text-xs font-medium text-text-muted">Suggested programme searches</p>
+                                    <div className="mt-2 flex flex-wrap gap-2">
+                                        {suggestedPrograms.map((program) => (
+                                            <button
+                                                key={program}
+                                                type="button"
+                                                onClick={() => setProfile((c) => ({ ...c, program }))}
+                                                className="rounded-lg border border-border bg-white px-2.5 py-1 text-xs font-medium text-text-secondary transition-colors hover:border-primary/30 hover:text-primary"
+                                            >
+                                                {program}
+                                            </button>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         )}
@@ -460,14 +591,15 @@ export default function UniversitiesPage() {
                             <div>
                                 <h2 className="text-[15px] font-semibold text-text-primary">Academic strength</h2>
                                 <p className="mt-1 text-[13px] text-text-secondary">
-                                    GPA and test scores help the AI gauge competitiveness and ambition level.
+                                    Add the clearest score you have. Optional scores still help separate safe, balanced, and ambitious schools.
                                 </p>
-                                <div className="mt-5 grid gap-4 sm:grid-cols-2">
+                                <div className="mt-4 grid gap-4 sm:grid-cols-2">
                                     <TextField
                                         label="Current GPA"
                                         value={profile.gpa}
                                         onChange={(v) => setProfile((c) => ({ ...c, gpa: v }))}
                                         placeholder="3.6 / 4.0 or 78 / 100"
+                                        hint="Accepted formats: 3.6/4.0, 78/100, second class upper."
                                     />
                                     <SelectField
                                         label="Standardized exam"
@@ -480,12 +612,14 @@ export default function UniversitiesPage() {
                                         value={profile.testScore}
                                         onChange={(v) => setProfile((c) => ({ ...c, testScore: v }))}
                                         placeholder={profile.testType === "None" ? "Optional" : "Enter your score"}
+                                        hint={profile.testType === "None" ? "Leave blank if you have not taken a standardized exam." : "Examples: GRE 320, GMAT 680, SAT 1350."}
                                     />
                                     <TextField
                                         label="English proficiency score"
                                         value={profile.englishScore}
                                         onChange={(v) => setProfile((c) => ({ ...c, englishScore: v }))}
                                         placeholder="Optional if covered already"
+                                        hint="Examples: IELTS 7.0, TOEFL 100, Duolingo 125."
                                     />
                                 </div>
                             </div>
@@ -496,30 +630,39 @@ export default function UniversitiesPage() {
                             <div>
                                 <h2 className="text-[15px] font-semibold text-text-primary">Budget and career direction</h2>
                                 <p className="mt-1 text-[13px] text-text-secondary">
-                                    Funding preference and career goals shape the shortlist toward realistic options.
+                                    Make the shortlist realistic by telling the matcher what you can fund and what outcome matters.
                                 </p>
-                                <div className="mt-5 space-y-4">
-                                    <OptionPills
-                                        label="Funding preference"
-                                        options={fundingOptions}
-                                        value={profile.funding}
-                                        onChange={(v) => setProfile((c) => ({ ...c, funding: v }))}
-                                    />
-                                    <OptionPills
-                                        label="Budget comfort"
-                                        options={budgetOptions}
-                                        value={profile.budget}
-                                        onChange={(v) => setProfile((c) => ({ ...c, budget: v }))}
-                                    />
+                                <div className="mt-4 grid gap-4 lg:grid-cols-2">
+                                    <div className="rounded-lg border border-border p-3">
+                                        <OptionPills
+                                            label="Funding preference"
+                                            options={fundingOptions}
+                                            value={profile.funding}
+                                            onChange={(v) => setProfile((c) => ({ ...c, funding: v }))}
+                                        />
+                                    </div>
+                                    <div className="rounded-lg border border-border p-3">
+                                        <OptionPills
+                                            label="Budget comfort"
+                                            options={budgetOptions}
+                                            value={profile.budget}
+                                            onChange={(v) => setProfile((c) => ({ ...c, budget: v }))}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="mt-4 space-y-4">
                                     <div>
                                         <FieldLabel>Career goal or intended outcome</FieldLabel>
                                         <textarea
                                             value={profile.goals}
                                             onChange={(e) => setProfile((c) => ({ ...c, goals: e.target.value }))}
-                                            placeholder="Industries you care about, whether scholarship access matters more than rankings..."
-                                            rows={4}
+                                            placeholder="Example: I want data roles in healthcare, and scholarship access matters more than ranking."
+                                            rows={3}
                                             className="w-full rounded-lg border border-border bg-white px-3 py-2.5 text-sm leading-relaxed text-text-primary placeholder:text-text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/12"
                                         />
+                                        <p className="mt-1 text-xs text-text-muted">
+                                            Mention industry, return plan, funding priority, or whether prestige matters.
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -530,16 +673,16 @@ export default function UniversitiesPage() {
                             <div>
                                 <h2 className="text-[15px] font-semibold text-text-primary">Supporting documents</h2>
                                 <p className="mt-1 text-[13px] text-text-secondary">
-                                    A transcript or CV helps the AI sharpen recommendations. Optional but recommended.
+                                    Optional, but recommended. A CV or transcript helps the matcher judge readiness with more confidence.
                                 </p>
-                                <div className="mt-5 grid gap-5 lg:grid-cols-2">
-                                    <label className="group relative flex min-h-48 cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-border bg-surface px-5 text-center transition-colors hover:border-primary/30 hover:bg-primary/4">
+                                <div className="mt-4 grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+                                    <label className="group relative flex min-h-48 cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-border bg-surface/70 px-6 py-8 text-center transition-colors hover:border-primary/30 hover:bg-primary-50">
                                         <CloudUploadIcon size={28} className="text-primary/70" />
                                         <p className="mt-3 text-sm font-medium text-text-primary">
-                                            Drop files or click to upload
+                                            Upload supporting files
                                         </p>
                                         <p className="mt-1 text-xs text-text-muted">
-                                            PDF, DOC, or image files
+                                            PDF, DOC, JPG, or PNG. Multiple files allowed.
                                         </p>
                                         <input
                                             type="file"
@@ -551,7 +694,7 @@ export default function UniversitiesPage() {
                                     </label>
 
                                     <div>
-                                        <p className="text-xs font-medium text-text-muted">Suggested</p>
+                                        <p className="text-xs font-medium text-text-muted">Recommended file types</p>
                                         <div className="mt-2 flex flex-wrap gap-1.5">
                                             {documentLabels.map((label) => (
                                                 <span
@@ -585,8 +728,8 @@ export default function UniversitiesPage() {
                                                     </div>
                                                 ))
                                             ) : (
-                                                <p className="rounded-lg bg-surface px-3 py-3 text-[13px] text-text-muted">
-                                                    No files yet. You can still run the matcher without them.
+                                                <p className="rounded-lg bg-surface px-3 py-3 text-[13px] leading-relaxed text-text-muted">
+                                                    No files yet. You can run the matcher without them, but uploaded documents improve the brief.
                                                 </p>
                                             )}
                                         </div>
@@ -631,7 +774,7 @@ export default function UniversitiesPage() {
 
                 {/* Sidebar */}
                 <aside className="space-y-4 xl:sticky xl:top-6 xl:self-start">
-                    <ReadinessMeter profile={profile} hasProgram={hasProgram} hasDocuments={hasDocuments} />
+                    <MatcherBrief profile={profile} hasProgram={hasProgram} hasDocuments={hasDocuments} />
 
                     <div className="rounded-xl border border-border bg-white p-5">
                         <p className="text-[13px] font-semibold text-text-primary">How matching works</p>
@@ -661,7 +804,7 @@ export default function UniversitiesPage() {
                     <div className="rounded-xl border border-border bg-white p-5">
                         <p className="text-[13px] font-semibold text-text-primary">Tips for better results</p>
                         <ul className="mt-3 space-y-2 text-xs leading-relaxed text-text-secondary">
-                            <li>Use specific programme names like "Data Science" instead of "Tech".</li>
+                            <li>Use specific programme names like Data Science instead of Tech.</li>
                             <li>Include test scores if you have them, even optional ones.</li>
                             <li>If funding is critical, say so. It changes results materially.</li>
                         </ul>

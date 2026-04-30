@@ -1,9 +1,8 @@
 "use client";
 
-import { Footer } from "@/components/layout/Footer";
-import { Navbar } from "@/components/layout/Navbar";
 import { Input } from "@/components/ui/Input";
 import { cn } from "@/lib/utils";
+import type { ExpertConsultant } from "@/lib/expert-consultants";
 import {
     Calendar01Icon,
     ArrowLeft01Icon,
@@ -16,6 +15,7 @@ import {
     CameraVideoIcon,
 } from "hugeicons-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useMemo, useState } from "react";
 
 type ConsultationType = "visa" | "admissions" | "scholarship" | "documents";
@@ -115,7 +115,22 @@ const formSteps: { id: FormStep; label: string }[] = [
     { id: 4, label: "Details" },
 ];
 
-export default function ConsultationPage() {
+export type ConsultationBookingWizardProps = {
+    expert?: ExpertConsultant | null;
+    /** Hide standalone title row (used inside dashboard tabs). */
+    embedded?: boolean;
+    /** When embedded, "Browse experts" becomes this callback. */
+    onNavigateExperts?: () => void;
+    /** Called after reset / book another so parent can clear selected expert. */
+    onResetBooking?: () => void;
+};
+
+export function ConsultationBookingWizard({
+    expert = null,
+    embedded = false,
+    onNavigateExperts,
+    onResetBooking,
+}: ConsultationBookingWizardProps) {
     const [currentStep, setCurrentStep] = useState<FormStep>(1);
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
@@ -131,15 +146,28 @@ export default function ConsultationPage() {
         () => consultationTypes.find((item) => item.id === selectedType) ?? consultationTypes[0],
         [selectedType]
     );
-    const activePlan = useMemo(
-        () => pricingPlans.find((item) => item.id === selectedPlan) ?? pricingPlans[0],
-        [selectedPlan]
-    );
+    const activePlan = useMemo(() => {
+        if (expert) {
+            return {
+                name: `Session with ${expert.name}`,
+                price: `$${expert.priceUsd} USD`,
+                note: `${expert.durationMin}-minute live consultation`,
+                features: ["Video call with your consultant", "Email confirmation", "Session notes"],
+            };
+        }
+        const p = pricingPlans.find((item) => item.id === selectedPlan) ?? pricingPlans[0];
+        return {
+            name: p.name,
+            price: p.price,
+            note: p.note,
+            features: p.features,
+        };
+    }, [expert, selectedPlan]);
 
     function canAdvance(step: FormStep) {
         if (step === 1) return !!selectedType;
         if (step === 2) return !!selectedDay && !!selectedTime;
-        if (step === 3) return !!selectedPlan;
+        if (step === 3) return expert ? true : !!selectedPlan;
         return !!fullName.trim() && !!email.trim() && !!phone.trim();
     }
 
@@ -170,20 +198,28 @@ export default function ConsultationPage() {
         setSelectedTime(timeSlots[3]);
         setNotes("");
         setCurrentStep(1);
+        onResetBooking?.();
     }
+
+    const sessionDurationLabel = expert ? `${expert.durationMin} min` : activeType.duration;
 
     return (
         <>
-            <Navbar />
-            <main className="flex-1 bg-surface pb-16 pt-8">
-                <section className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
                     {/* Header */}
-                    {!submitted && (
-                        <div className="mb-6">
-                            <h1 className="text-xl font-semibold text-text-primary">Book a consultation</h1>
-                            <p className="mt-1 text-sm text-text-secondary">
-                                Pick a session type, choose a time, and confirm your booking.
-                            </p>
+                    {!submitted && !embedded && (
+                        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                            <div>
+                                <h1 className="text-xl font-semibold text-text-primary">Book a consultation</h1>
+                                <p className="mt-1 text-sm text-text-secondary">
+                                    Pick a session type, choose a time, and confirm your booking.
+                                </p>
+                            </div>
+                            <Link
+                                href="/consultation"
+                                className="shrink-0 text-[13px] font-medium text-primary hover:text-primary-dark"
+                            >
+                                Browse experts
+                            </Link>
                         </div>
                     )}
 
@@ -396,64 +432,107 @@ export default function ConsultationPage() {
                                     {currentStep === 3 && (
                                         <div className="space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-500">
                                             <div>
-                                                <h2 className="text-lg font-bold text-text-primary">Choose your package</h2>
-                                                <p className="mt-1 text-xs text-text-secondary">All plans include a confirmation email and session notes.</p>
+                                                <h2 className="text-lg font-bold text-text-primary">
+                                                    {expert ? "Session fee" : "Choose your package"}
+                                                </h2>
+                                                <p className="mt-1 text-xs text-text-secondary">
+                                                    {expert
+                                                        ? "Pricing is set by your selected consultant for this session length."
+                                                        : "All plans include a confirmation email and session notes."}
+                                                </p>
                                             </div>
 
-                                            <div className="space-y-3">
-                                                {pricingPlans.map((plan) => {
-                                                    const isActive = selectedPlan === plan.id;
-                                                    return (
-                                                        <button
-                                                            key={plan.id}
-                                                            type="button"
-                                                            onClick={() => setSelectedPlan(plan.id)}
-                                                            className={cn(
-                                                                "relative w-full flex items-center gap-4 rounded-xl border-2 p-4 text-left transition-all duration-200 cursor-pointer group",
-                                                                isActive
-                                                                    ? "border-primary bg-primary/5 shadow-md"
-                                                                    : "border-border bg-white hover:border-primary/30",
-                                                                plan.highlight && !isActive && "border-accent/40"
-                                                            )}
-                                                        >
-                                                            {/* Radio indicator */}
-                                                            <div className={cn(
-                                                                "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
-                                                                isActive ? "border-primary bg-primary" : "border-border group-hover:border-primary/40"
-                                                            )}>
-                                                                {isActive && <div className="h-2 w-2 rounded-full bg-white" />}
-                                                            </div>
-
-                                                            {/* Plan info */}
-                                                            <div className="flex-1 min-w-0">
-                                                                <div className="flex items-center gap-2">
-                                                                    <h3 className="text-sm font-bold text-text-primary">{plan.name}</h3>
-                                                                    {plan.highlight && (
-                                                                        <span className="rounded-full bg-accent/10 px-2 py-0.5 text-[10px] font-bold text-accent">Popular</span>
-                                                                    )}
-                                                                </div>
-                                                                <p className="mt-0.5 text-xs text-text-secondary">{plan.note}</p>
-                                                                <div className="mt-2 flex flex-wrap gap-1.5">
-                                                                    {plan.features.map((f) => (
-                                                                        <span key={f} className="inline-flex items-center gap-1 rounded-md bg-surface px-2 py-0.5 text-[10px] font-medium text-text-secondary border border-border/50">
-                                                                            <CheckmarkCircle01Icon size={10} className="text-accent" />
-                                                                            {f}
-                                                                        </span>
-                                                                    ))}
-                                                                </div>
-                                                            </div>
-
-                                                            {/* Price */}
-                                                            <div className="shrink-0 text-right">
-                                                                <span className={cn("text-xl font-black", isActive ? "text-primary" : "text-text-primary")}>
-                                                                    {plan.price.split(" ")[1]}
+                                            {expert ? (
+                                                <div className="flex flex-col gap-4 rounded-xl border-2 border-primary/25 bg-primary/5 p-4 sm:flex-row sm:items-center">
+                                                    <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-border bg-surface">
+                                                        <Image
+                                                            src={expert.imageUrl}
+                                                            alt=""
+                                                            fill
+                                                            className="object-cover"
+                                                            sizes="56px"
+                                                        />
+                                                    </div>
+                                                    <div className="min-w-0 flex-1">
+                                                        <p className="text-sm font-bold text-text-primary">{expert.name}</p>
+                                                        <p className="text-xs text-text-secondary">{expert.title}</p>
+                                                        <div className="mt-2 flex flex-wrap gap-1.5">
+                                                            {activePlan.features.map((f) => (
+                                                                <span
+                                                                    key={f}
+                                                                    className="inline-flex items-center gap-1 rounded-md border border-border/50 bg-white px-2 py-0.5 text-[10px] font-medium text-text-secondary"
+                                                                >
+                                                                    <CheckmarkCircle01Icon size={10} className="text-accent" />
+                                                                    {f}
                                                                 </span>
-                                                                <span className="block text-[10px] font-medium text-text-muted">{plan.price.split(" ")[0]}</span>
-                                                            </div>
-                                                        </button>
-                                                    );
-                                                })}
-                                            </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                    <div className="shrink-0 text-right">
+                                                        <p className="text-2xl font-bold text-primary">${expert.priceUsd}</p>
+                                                        <p className="text-[11px] text-text-muted">USD · {expert.durationMin} min</p>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="space-y-3">
+                                                    {pricingPlans.map((plan) => {
+                                                        const isActive = selectedPlan === plan.id;
+                                                        return (
+                                                            <button
+                                                                key={plan.id}
+                                                                type="button"
+                                                                onClick={() => setSelectedPlan(plan.id)}
+                                                                className={cn(
+                                                                    "group relative flex w-full cursor-pointer items-center gap-4 rounded-xl border-2 p-4 text-left transition-all duration-200",
+                                                                    isActive
+                                                                        ? "border-primary bg-primary/5"
+                                                                        : "border-border bg-white hover:border-primary/30",
+                                                                    plan.highlight && !isActive && "border-accent/40"
+                                                                )}
+                                                            >
+                                                                <div
+                                                                    className={cn(
+                                                                        "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
+                                                                        isActive ? "border-primary bg-primary" : "border-border group-hover:border-primary/40"
+                                                                    )}
+                                                                >
+                                                                    {isActive && <div className="h-2 w-2 rounded-full bg-white" />}
+                                                                </div>
+
+                                                                <div className="min-w-0 flex-1">
+                                                                    <div className="flex items-center gap-2">
+                                                                        <h3 className="text-sm font-bold text-text-primary">{plan.name}</h3>
+                                                                        {plan.highlight && (
+                                                                            <span className="rounded-full bg-accent/10 px-2 py-0.5 text-[10px] font-bold text-accent">
+                                                                                Popular
+                                                                            </span>
+                                                                        )}
+                                                                    </div>
+                                                                    <p className="mt-0.5 text-xs text-text-secondary">{plan.note}</p>
+                                                                    <div className="mt-2 flex flex-wrap gap-1.5">
+                                                                        {plan.features.map((f) => (
+                                                                            <span
+                                                                                key={f}
+                                                                                className="inline-flex items-center gap-1 rounded-md border border-border/50 bg-surface px-2 py-0.5 text-[10px] font-medium text-text-secondary"
+                                                                            >
+                                                                                <CheckmarkCircle01Icon size={10} className="text-accent" />
+                                                                                {f}
+                                                                            </span>
+                                                                        ))}
+                                                                    </div>
+                                                                </div>
+
+                                                                <div className="shrink-0 text-right">
+                                                                    <span className={cn("text-xl font-black", isActive ? "text-primary" : "text-text-primary")}>
+                                                                        {plan.price.split(" ")[1]}
+                                                                    </span>
+                                                                    <span className="block text-[10px] font-medium text-text-muted">{plan.price.split(" ")[0]}</span>
+                                                                </div>
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
+                                            )}
                                         </div>
                                     )}
 
@@ -552,12 +631,30 @@ export default function ConsultationPage() {
                                     </div>
 
                                     <div className="divide-y divide-border">
+                                        {expert && (
+                                            <div className="flex items-center gap-3 px-4 py-3">
+                                                <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-border bg-surface">
+                                                    <Image
+                                                        src={expert.imageUrl}
+                                                        alt=""
+                                                        fill
+                                                        className="object-cover"
+                                                        sizes="40px"
+                                                    />
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <p className="text-[11px] text-text-muted">Consultant</p>
+                                                    <p className="truncate text-sm font-medium text-text-primary">{expert.name}</p>
+                                                    <p className="truncate text-[11px] text-text-secondary">{expert.title}</p>
+                                                </div>
+                                            </div>
+                                        )}
                                         <div className="flex items-center justify-between px-4 py-3">
                                             <div>
                                                 <p className="text-[11px] text-text-muted">Session</p>
                                                 <p className="text-sm font-medium text-text-primary">{activeType.label}</p>
                                             </div>
-                                            <span className="rounded-md bg-primary/8 px-2 py-0.5 text-[11px] font-semibold text-primary">{activeType.duration}</span>
+                                            <span className="rounded-md bg-primary/8 px-2 py-0.5 text-[11px] font-semibold text-primary">{sessionDurationLabel}</span>
                                         </div>
 
                                         <div className="px-4 py-3">
@@ -664,9 +761,6 @@ export default function ConsultationPage() {
                             </div>
                         </div>
                     )}
-                </section>
-            </main>
-            <Footer />
         </>
     );
 }

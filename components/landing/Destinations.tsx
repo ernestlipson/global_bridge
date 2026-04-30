@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 const destinations = [
     {
@@ -57,13 +58,23 @@ const destinations = [
     },
 ];
 
+const apiCountryByDestination: Record<string, string> = {
+    "United States": "USA",
+    Canada: "Canada",
+};
+
 function DestinationCard({ dest }: { dest: typeof destinations[0] }) {
     const heightClass = 
         dest.type === "tall" ? "lg:h-[480px]" :
         dest.type === "medium" ? "lg:h-[380px]" : "lg:h-[300px]";
+    const universityHref = `/universities?country=${encodeURIComponent(apiCountryByDestination[dest.country] || dest.country)}`;
 
     return (
-        <div className={`w-full lg:flex-1 h-[350px] ${heightClass} rounded-[2rem] relative overflow-hidden group shadow-lg`}>
+        <Link
+            href={universityHref}
+            className={`w-full lg:flex-1 h-[350px] ${heightClass} rounded-[2rem] relative overflow-hidden group shadow-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-4`}
+            aria-label={`View universities in ${dest.country}`}
+        >
             <Image
                 src={dest.image}
                 alt={dest.country}
@@ -80,7 +91,7 @@ function DestinationCard({ dest }: { dest: typeof destinations[0] }) {
                     </span>
                 </div>
             </div>
-        </div>
+        </Link>
     );
 }
 

@@ -1,8 +1,9 @@
 "use client";
 
+import { AppLogo } from "@/components/brand/AppLogo";
 import { consultationHref } from "@/lib/contact";
 import { cn } from "@/lib/utils";
-import { Calendar01Icon, GraduationScrollIcon, Menu01Icon, ArrowLeft01Icon } from "hugeicons-react";
+import { Calendar01Icon, Menu01Icon, ArrowLeft01Icon } from "hugeicons-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -11,27 +12,23 @@ const navLinks = [
     { label: "How It Works", href: "#how-it-works" },
     { label: "Destinations", href: "#destinations" },
     { label: "Testimonials", href: "#testimonials" },
+    { label: "Team", href: "/team" },
 ];
 
-export function Navbar() {
+type NavbarProps = {
+    /** “Book Consultation” appears only on the marketing home page. */
+    showBookConsultation?: boolean;
+};
+
+export function Navbar({ showBookConsultation = false }: NavbarProps) {
     const [mobileOpen, setMobileOpen] = useState(false);
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-white/80 backdrop-blur-lg">
             <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
                 {/* Logo */}
-                <Link href="/" className="flex items-center gap-2.5">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary">
-                        <GraduationScrollIcon size={20} className="text-white" />
-                    </div>
-                    <div className="leading-tight">
-                        <span className="text-base font-bold text-text-primary tracking-tight">
-                            GlobalBridge
-                        </span>
-                        <span className="block text-[10px] font-medium text-text-muted -mt-0.5">
-                            Edu Consult
-                        </span>
-                    </div>
+                <Link href="/" className="flex min-w-0 shrink-0 items-center">
+                    <AppLogo priority heightClass="h-8 sm:h-9" maxWidthClass="max-w-[min(230px,72vw)]" />
                 </Link>
 
                 {/* Desktop nav */}
@@ -49,13 +46,15 @@ export function Navbar() {
 
                 {/* Desktop CTA */}
                 <div className="hidden items-center gap-3 md:flex">
-                    <Link
-                        href={consultationHref}
-                        className="inline-flex items-center gap-2 rounded-lg border border-primary/15 bg-primary/5 px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/10"
-                    >
-                        <Calendar01Icon size={16} />
-                        Book Consultation
-                    </Link>
+                    {showBookConsultation && (
+                        <Link
+                            href={consultationHref}
+                            className="inline-flex items-center gap-2 rounded-lg border border-primary/15 bg-primary/5 px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/10"
+                        >
+                            <Calendar01Icon size={16} />
+                            Book Consultation
+                        </Link>
+                    )}
                     <Link
                         href="/login"
                         className="rounded-lg px-4 py-2 text-sm font-medium text-text-secondary transition-colors hover:text-text-primary"
@@ -106,14 +105,16 @@ export function Navbar() {
                     >
                         Log in
                     </Link>
-                    <Link
-                        href={consultationHref}
-                        onClick={() => setMobileOpen(false)}
-                        className="inline-flex items-center justify-center gap-2 rounded-lg border border-primary/15 bg-primary/5 px-3 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-primary/10"
-                    >
-                        <Calendar01Icon size={16} />
-                        Book Consultation
-                    </Link>
+                    {showBookConsultation && (
+                        <Link
+                            href={consultationHref}
+                            onClick={() => setMobileOpen(false)}
+                            className="inline-flex items-center justify-center gap-2 rounded-lg border border-primary/15 bg-primary/5 px-3 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-primary/10"
+                        >
+                            <Calendar01Icon size={16} />
+                            Book Consultation
+                        </Link>
+                    )}
                     <Link
                         href="/dashboard"
                         onClick={() => setMobileOpen(false)}

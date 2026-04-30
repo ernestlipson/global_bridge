@@ -40,7 +40,7 @@ const actions = [
     {
         title: "Review university shortlist",
         body: "Matcher results have enough context to start narrowing realistic schools.",
-        href: "/universities",
+        href: "/university-matcher",
         icon: GraduationScrollIcon,
         iconBg: "bg-accent-light text-accent-dark",
     },

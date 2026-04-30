@@ -15,7 +15,7 @@ import { AiBrain01Icon } from "hugeicons-react";
 export default function Home() {
   return (
     <>
-      <Navbar />
+      <Navbar showBookConsultation />
       <main>
         <Hero />
         <UniversityMarquee />

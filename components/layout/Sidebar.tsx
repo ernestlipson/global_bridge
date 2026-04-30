@@ -1,21 +1,26 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { AppLogo } from "@/components/brand/AppLogo";
 import {
     DashboardCircleIcon,
     CameraMicrophone01Icon,
     GraduationScrollIcon,
     Wallet01Icon,
     DocumentAttachmentIcon,
+    FileEditIcon,
     CheckListIcon,
     ClipboardIcon,
+    DollarCircleIcon,
     Airplane01Icon,
     UserSearch01Icon,
     AiUserIcon,
     ArrowLeft01Icon,
+    Home01Icon,
     Logout01Icon,
     TeacherIcon,
 } from "hugeicons-react";
+import { isDashboardNavActive } from "@/lib/dashboard-nav-active";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -23,10 +28,12 @@ import { useState } from "react";
 const navItems = [
     { label: "Dashboard", href: "/dashboard", icon: DashboardCircleIcon },
     { label: "Visa Interview", href: "/visa", icon: CameraMicrophone01Icon },
-    { label: "Universities", href: "/universities", icon: GraduationScrollIcon },
+    { label: "University Matcher", href: "/university-matcher", icon: GraduationScrollIcon },
     { label: "Professors", href: "/professors", icon: TeacherIcon },
     { label: "Scholarships", href: "/scholarships", icon: Wallet01Icon },
+    { label: "Consultation", href: "/consultation", icon: DollarCircleIcon },
     { label: "Documents", href: "/documents", icon: DocumentAttachmentIcon },
+    { label: "SOP & CV Builder", href: "/documents/sop-cv-builder", icon: FileEditIcon },
     { label: "Transcript", href: "/transcript", icon: CheckListIcon },
     { label: "Applications", href: "/applications", icon: ClipboardIcon },
     { label: "Pre-departure", href: "/predeparture", icon: Airplane01Icon },
@@ -48,21 +55,17 @@ export function Sidebar() {
             {/* Logo */}
             <div className="flex h-16 items-center justify-between border-b border-border px-4">
                 {!collapsed && (
-                    <Link href="/dashboard" className="flex items-center gap-2">
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary">
-                            <GraduationScrollIcon size={17} className="text-white" />
-                        </div>
-                        <span className="text-sm font-bold text-text-primary tracking-tight">
-                            GlobalBridge
-                        </span>
+                    <Link href="/dashboard" className="flex min-w-0 items-center">
+                        <AppLogo heightClass="h-8" maxWidthClass="max-w-[160px]" />
                     </Link>
                 )}
                 {collapsed && (
                     <Link
                         href="/dashboard"
-                        className="mx-auto flex h-8 w-8 items-center justify-center rounded-lg bg-primary"
+                        className="mx-auto flex items-center justify-center"
+                        aria-label="GlobalBridge dashboard"
                     >
-                        <GraduationScrollIcon size={17} className="text-white" />
+                        <AppLogo square squarePx={44} />
                     </Link>
                 )}
             </div>
@@ -71,9 +74,7 @@ export function Sidebar() {
             <nav className="flex-1 overflow-y-auto px-3 py-4" aria-label="Dashboard">
                 <ul className="space-y-1">
                     {navItems.map((item) => {
-                        const isActive =
-                            pathname === item.href ||
-                            (item.href !== "/dashboard" && pathname.startsWith(item.href));
+                        const isActive = isDashboardNavActive(pathname, item.href);
 
                         return (
                             <li key={item.href}>
@@ -99,6 +100,17 @@ export function Sidebar() {
 
             {/* Bottom actions */}
             <div className="border-t border-border p-3 space-y-1">
+                <Link
+                    href="/"
+                    className={cn(
+                        "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-text-secondary transition-colors hover:bg-surface hover:text-text-primary",
+                        collapsed && "justify-center px-0"
+                    )}
+                    title={collapsed ? "Back home" : undefined}
+                >
+                    <Home01Icon size={19} className="shrink-0" />
+                    {!collapsed && "Back home"}
+                </Link>
                 <button
                     onClick={() => setCollapsed(!collapsed)}
                     className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-text-muted transition-colors hover:bg-surface hover:text-text-primary cursor-pointer"
